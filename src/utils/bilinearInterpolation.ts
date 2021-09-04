@@ -22,64 +22,72 @@ export const bilinearInterpolation = (
 
   for (let y = 0; y < destHeight; y++) {
     const srcY = y * heightRatio;
-    const k = Math.floor(srcY);
-    const c = srcY - k;
+    const j = Math.floor(srcY);
+    const b = srcY - j;
     for (let x = 0; x < destWidth; x++) {
       const srcX = x * widthRatio;
-      const j = Math.floor(srcX);
-      const u = srcX - j;
+      const i = Math.floor(srcX);
+      const a = srcX - i;
 
       /**
-       * ----------------------
-       * |         |          |
-       * | S(j, k) | S(j+1, k)|
-       * |         |          |
-       * ----------|-----------
-       * |         |          |
-       * | S(j,k+1)|S(j+1,k+1)|
-       * |         |          |
-       * ----------------------
+       * (i, j + 1) |           | (i + 1, j + 1)
+       *           ---------------
+       *            |  (x, y)   |
+       *            | <----     |
+       *            |     |     |
+       *            |     v     |
+       *           ---------------
+       *     (i, j) |           | (i + 1, j)
        *
-       * D(x, y) = S(j + c, k + u)
+       * F(x, y) = (1 - a)(1 - b) F(i, j)
+       *         + a(1 - b)       F(i + 1, j)
+       *         + ab             F(i + 1, j + 1)
+       *         + (1 - a)b       F(i, j + 1)
+       * =>
+       * Dest(x, y) = (1 - a)(1 - b) Src(i, j)
+       *            + a(1 - b)       Src(i + 1, j)
+       *            + ab             Src(i + 1, j + 1)
+       *            + (1 - a)b       Src(i, j + 1)
+       */
+      const coffiecent1 = (1 - a) * (1 - b);
+      const coffiecent2 = a * (1 - b);
+      const coffiecent3 = a * b;
+      const coffiecent4 = (1 - a) * b;
+
+      /**
+       * Q12(x1, y2) |           | Q22(x2, y2)
+       *            ---------------
+       *             |  (x, y)   |
+       *             | <----     |
+       *             |     |     |
+       *             |     v     |
+       *            ------------------
+       * Q11(x1, y1) |              | Q21(x2, y1)
        *
-       * Q11 = S(j, k)(1 - c) + S(j+1, k) * c
-       * Q22 = S(j, k+1) * (1 - c) + S(j+1, k+1) * c
-       *
-       * D(x, y) = Q11 * (1 - u) + Q22 * u
-       *         = S(j, k) * (1 - c) * (1 - u)
-       *         + S(j+1, k) * c * (1 - u)
-       *         + S(j, k+1) * (1 - c) * u
-       *         + S(j+1, k+1) * c * u
+       * Dest(x, y) = coffiecent1 * Q11
+       *            + coffiecent2 * Q21
+       *            + coffiecent3 * Q22
+       *            + coffiecent4 * Q12
        */
 
-      const coffiecent1 = (1 - c) * (1 - u);
-      const coffiecent2 = c * (1 - u);
-      const coffiecent3 = c * u;
-      const coffiecent4 = (1 - c) * u;
+      const x1 = getClip(i, 0, srcWidth - 1);
+      const x2 = getClip(i + 1, 0, srcWidth - 1);
+      const y1 = getClip(j, 0, srcHeight - 1);
+      const y2 = getClip(j + 1, 0, srcHeight - 1);
 
-      // A = S(j, k)
-      const A =
-        matrix[getClip(k, 0, srcHeight - 1)][getClip(j, 0, srcWidth - 1)];
-      // B = S(j + 1, k)
-      const B =
-        matrix[getClip(k + 1, 0, srcHeight - 1)][getClip(j, 0, srcWidth - 1)];
-      // C = S(j + 1, k + 1)
-      const C =
-        matrix[getClip(k + 1, 0, srcHeight - 1)][
-          getClip(j + 1, 0, srcWidth - 1)
-        ];
-      // D = S(j, k + 1)
-      const D =
-        matrix[getClip(k, 0, srcHeight - 1)][getClip(j + 1, 0, srcWidth - 1)];
+      const Q11 = matrix[y1][x1];
+      const Q21 = matrix[y1][x2];
+      const Q22 = matrix[y2][x2];
+      const Q12 = matrix[y2][x1];
 
       const keys = ["R", "G", "B", "A"] as PixelKey[];
 
       keys.forEach((key: "R" | "G" | "B" | "A") => {
         result[y][x][key] =
-          coffiecent1 * A[key] +
-          coffiecent2 * B[key] +
-          coffiecent3 * C[key] +
-          coffiecent4 * D[key];
+          coffiecent1 * Q11[key] +
+          coffiecent2 * Q21[key] +
+          coffiecent3 * Q22[key] +
+          coffiecent4 * Q12[key];
       });
     }
   }
