@@ -1,5 +1,7 @@
 import { Item } from "src/components/App";
 
+import { BitType } from "src/utils/grayLevelResolution";
+
 export interface ControllerProps {
   isLoading: boolean;
   items: Item[];
@@ -14,16 +16,17 @@ export interface UseControllerProps {
   addItem: (item: Item) => void;
 }
 
-export type MethodType = "" | "scale";
+export type MethodType = "" | "scale" | "gray level resolution";
 
 export interface State {
   methodType: MethodType;
   width: string;
   height: string;
+  bit: BitType;
 }
 
 export type Action =
   | { type: "initialize" }
   | { type: "change-method-type"; methodType: MethodType }
-  | { type: "change-width"; payload: string }
-  | { type: "change-height"; payload: string };
+  | { type: "change-width" | "change-height"; payload: string }
+  | { type: "change-bit"; payload: BitType };

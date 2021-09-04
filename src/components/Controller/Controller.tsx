@@ -47,6 +47,52 @@ const Controller: React.FC<ControllerProps> = ({
     onClickAdd,
   } = useController({ items, addItem });
 
+  const fieldList =
+    state.methodType === "scale"
+      ? [
+          <TextField
+            label="Width"
+            onChange={onChangeTextField("width")}
+            required
+            size="small"
+            type="number"
+            value={state.width}
+            variant="outlined"
+            InputLabelProps={{ shrink: true }}
+          />,
+          <TextField
+            label="Height"
+            onChange={onChangeTextField("height")}
+            required
+            size="small"
+            type="number"
+            value={state.height}
+            variant="outlined"
+            InputLabelProps={{ shrink: true }}
+          />,
+        ]
+      : state.methodType === "gray level resolution"
+      ? [
+          <TextField
+            className={classes.select}
+            label="Bit"
+            onChange={onChangeTextField("bit")}
+            required
+            select
+            size="small"
+            value={state.bit}
+            variant="outlined"
+            defaultValue={8}
+          >
+            {[1, 2, 3, 4, 5, 6, 7, 8].map((value) => (
+              <MenuItem key={value} value={value}>
+                {value}
+              </MenuItem>
+            ))}
+          </TextField>,
+        ]
+      : null;
+
   const renderForm = (
     <Grid container spacing={1}>
       <Grid item>
@@ -63,36 +109,16 @@ const Controller: React.FC<ControllerProps> = ({
         >
           <MenuItem value="">None</MenuItem>
           <MenuItem value="scale">Scale</MenuItem>
+          <MenuItem value="gray level resolution">
+            Gray Level Resolution
+          </MenuItem>
         </TextField>
       </Grid>
-      {state.methodType === "scale" && (
-        <>
-          <Grid item>
-            <TextField
-              label="Width"
-              onChange={onChangeTextField("width")}
-              required
-              size="small"
-              type="number"
-              value={state.width}
-              variant="outlined"
-              InputLabelProps={{ shrink: true }}
-            />
-          </Grid>
-          <Grid item>
-            <TextField
-              label="Height"
-              onChange={onChangeTextField("height")}
-              required
-              size="small"
-              type="number"
-              value={state.height}
-              variant="outlined"
-              InputLabelProps={{ shrink: true }}
-            />
-          </Grid>
-        </>
-      )}
+      {fieldList?.map((component, i) => (
+        <Grid key={i} item>
+          {component}
+        </Grid>
+      ))}
     </Grid>
   );
 
