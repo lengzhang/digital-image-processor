@@ -1,11 +1,6 @@
 import React, { useCallback, useReducer } from "react";
 
-import {
-  imageFileToImageData,
-  imageDataToPixelMatrix,
-  pixelMatrixToImageData,
-} from "src/utils/imageDataUtils";
-import { bilinearInterpolation } from "src/utils/bilinearInterpolation";
+import { imageFileToImageData } from "src/utils/imageDataUtils";
 
 import { State, Action, Item } from "./types";
 
