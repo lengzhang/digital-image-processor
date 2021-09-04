@@ -27,7 +27,10 @@ const App = () => {
           <Grid container spacing={2} direction="column">
             {items.map((item, i) => (
               <Grid key={i} item component={Box} width="100%">
-                <Image title={item.title} imageData={item.imageData} />
+                <Image
+                  title={`${i > 0 ? `[${i}] ` : ""}${item.title}`}
+                  imageData={item.imageData}
+                />
               </Grid>
             ))}
           </Grid>

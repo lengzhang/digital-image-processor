@@ -1,9 +1,8 @@
 import { Pixel, PixelKey } from "./imageDataUtils";
 
-// https://www.cxyzjd.com/article/u012679980/49449647
+import { getClip } from "src/utils";
 
-const getClip = (x: number, min: number, max: number) =>
-  x < min ? min : max < x ? max : x;
+// https://www.cxyzjd.com/article/u012679980/49449647
 
 export const bilinearInterpolation = (
   matrix: Pixel[][],

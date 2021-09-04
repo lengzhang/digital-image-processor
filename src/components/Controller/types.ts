@@ -16,17 +16,25 @@ export interface UseControllerProps {
   addItem: (item: Item) => void;
 }
 
-export type MethodType = "" | "scale" | "gray level resolution";
+export type MethodType = "" | "spatial-resolution" | "gray-level-resolution";
+export type SpatialAlgorithm =
+  | "nearest-neighbor-interpolation"
+  | "linear-inerpolation"
+  | "bilinear-interpolation";
 
 export interface State {
   methodType: MethodType;
+  /** Spatial Resolution */
+  spatialAlgorithm: SpatialAlgorithm;
   width: string;
   height: string;
+  /** Gray Level Resolution */
   bit: BitType;
 }
 
 export type Action =
   | { type: "initialize" }
   | { type: "change-method-type"; methodType: MethodType }
+  | { type: "change-spatial-algorithm"; payload: SpatialAlgorithm }
   | { type: "change-width" | "change-height"; payload: string }
   | { type: "change-bit"; payload: BitType };

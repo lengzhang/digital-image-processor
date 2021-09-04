@@ -1,4 +1,6 @@
 import { useCallback, useEffect, useReducer } from "react";
+import { removeDashAndUppercaseFirstLetter } from "src/utils";
+import { nearestNeighborInterpolation } from "src/utils/nearestNeighborInterpolation";
 import { bilinearInterpolation } from "src/utils/bilinearInterpolation";
 import { BitType, grayLevelResolution } from "src/utils/grayLevelResolution";
 import {
@@ -6,12 +8,33 @@ import {
   pixelMatrixToImageData,
 } from "src/utils/imageDataUtils";
 
-import { UseControllerProps, State, Action, MethodType } from "./types";
+import {
+  UseControllerProps,
+  State,
+  Action,
+  MethodType,
+  SpatialAlgorithm,
+} from "./types";
+
+export const methodTypes: MethodType[] = [
+  "",
+  "spatial-resolution",
+  "gray-level-resolution",
+];
+
+export const spatialAlgorithms: SpatialAlgorithm[] = [
+  "nearest-neighbor-interpolation",
+  "linear-inerpolation",
+  "bilinear-interpolation",
+];
 
 const initialState: State = {
   methodType: "",
+  /** Spatial Resolution */
+  spatialAlgorithm: "nearest-neighbor-interpolation",
   width: "",
   height: "",
+  /** Gray Level Resolution */
   bit: 8,
 };
 
@@ -23,6 +46,10 @@ const reducer = (state: State, action: Action): State => {
 
     case "change-method-type":
       state = { ...state, methodType: action.methodType };
+      break;
+
+    case "change-spatial-algorithm":
+      state = { ...state, spatialAlgorithm: action.payload };
       break;
 
     case "change-width":
@@ -59,7 +86,7 @@ const useController = ({ items, addItem }: UseControllerProps) => {
 
   const onChangeTextField =
     (
-      type: "width" | "height" | "bit"
+      type: "width" | "height" | "bit" | "spatial-algorithm"
     ): React.ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement> =>
     (event) => {
       event.preventDefault();
@@ -67,6 +94,11 @@ const useController = ({ items, addItem }: UseControllerProps) => {
         dispatch({
           type: `change-${type}`,
           payload: parseInt(event.target.value) as BitType,
+        });
+      } else if (type === "spatial-algorithm") {
+        dispatch({
+          type: `change-${type}`,
+          payload: event.target.value as SpatialAlgorithm,
         });
       } else {
         dispatch({ type: `change-${type}`, payload: event.target.value });
@@ -82,16 +114,29 @@ const useController = ({ items, addItem }: UseControllerProps) => {
     let title = "",
       imageData: ImageData | null = null;
 
-    if (state.methodType === "scale") {
-      title = `Scale: (${state.width} x ${state.height})`;
-      const result = bilinearInterpolation(
-        matrix,
-        parseInt(state.width),
-        parseInt(state.height)
-      );
+    if (state.methodType === "spatial-resolution") {
+      title = `${removeDashAndUppercaseFirstLetter(
+        state.methodType
+      )}: ${removeDashAndUppercaseFirstLetter(state.spatialAlgorithm)} (${
+        state.width
+      } x ${state.height})`;
+      const result =
+        state.spatialAlgorithm === "nearest-neighbor-interpolation"
+          ? nearestNeighborInterpolation(
+              matrix,
+              parseInt(state.width),
+              parseInt(state.height)
+            )
+          : bilinearInterpolation(
+              matrix,
+              parseInt(state.width),
+              parseInt(state.height)
+            );
       imageData = pixelMatrixToImageData(result);
-    } else if (state.methodType === "gray level resolution") {
-      title = `Gray Level Resolution: ${state.bit}-bit`;
+    } else if (state.methodType === "gray-level-resolution") {
+      title = `${removeDashAndUppercaseFirstLetter(state.methodType)}: ${
+        state.bit
+      }-bit`;
       const result = grayLevelResolution(matrix, state.bit);
       imageData = pixelMatrixToImageData(result);
     }
@@ -102,8 +147,10 @@ const useController = ({ items, addItem }: UseControllerProps) => {
   return {
     state,
     isAddable:
-      (state.methodType === "scale" && !!state.width && !!state.height) ||
-      (state.methodType === "gray level resolution" && !!state.bit),
+      (state.methodType === "spatial-resolution" &&
+        !!state.width &&
+        !!state.height) ||
+      (state.methodType === "gray-level-resolution" && !!state.bit),
     onChangeMethodType,
     onChangeTextField,
     onClickAdd,

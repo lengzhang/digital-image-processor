@@ -10,7 +10,10 @@ import MenuItem from "@material-ui/core/MenuItem";
 import TextField from "@material-ui/core/TextField";
 
 import ImageUploadButton from "src/components/ImageUploadButton";
-import useController from "./useController";
+
+import { removeDashAndUppercaseFirstLetter } from "src/utils";
+
+import useController, { methodTypes, spatialAlgorithms } from "./useController";
 
 import { ControllerProps } from "./types";
 
@@ -48,8 +51,25 @@ const Controller: React.FC<ControllerProps> = ({
   } = useController({ items, addItem });
 
   const fieldList =
-    state.methodType === "scale"
+    state.methodType === "spatial-resolution"
       ? [
+          <TextField
+            className={classes.select}
+            label="Algorithm"
+            onChange={onChangeTextField("spatial-algorithm")}
+            required
+            select
+            size="small"
+            value={state.spatialAlgorithm}
+            variant="outlined"
+            defaultValue={8}
+          >
+            {spatialAlgorithms.map((spatialAlgorithm) => (
+              <MenuItem key={spatialAlgorithm} value={spatialAlgorithm}>
+                {removeDashAndUppercaseFirstLetter(spatialAlgorithm)}
+              </MenuItem>
+            ))}
+          </TextField>,
           <TextField
             label="Width"
             onChange={onChangeTextField("width")}
@@ -71,7 +91,7 @@ const Controller: React.FC<ControllerProps> = ({
             InputLabelProps={{ shrink: true }}
           />,
         ]
-      : state.methodType === "gray level resolution"
+      : state.methodType === "gray-level-resolution"
       ? [
           <TextField
             className={classes.select}
@@ -107,11 +127,13 @@ const Controller: React.FC<ControllerProps> = ({
           variant="outlined"
           InputLabelProps={{ shrink: true }}
         >
-          <MenuItem value="">None</MenuItem>
-          <MenuItem value="scale">Scale</MenuItem>
-          <MenuItem value="gray level resolution">
-            Gray Level Resolution
-          </MenuItem>
+          {methodTypes.map((methodType, i) => (
+            <MenuItem key={`${methodType}i${i}`} value={methodType}>
+              {methodType
+                ? removeDashAndUppercaseFirstLetter(methodType)
+                : "None"}
+            </MenuItem>
+          ))}
         </TextField>
       </Grid>
       {fieldList?.map((component, i) => (
