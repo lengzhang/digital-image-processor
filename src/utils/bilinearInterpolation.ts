@@ -4,6 +4,8 @@ import { getClip } from "src/utils";
 
 // https://www.cxyzjd.com/article/u012679980/49449647
 
+const keys = ["R", "G", "B", "A"] as PixelKey[];
+
 export const bilinearInterpolation = (
   matrix: Pixel[][],
   destWidth: number,
@@ -78,8 +80,6 @@ export const bilinearInterpolation = (
       const Q21 = matrix[y1][x2];
       const Q22 = matrix[y2][x2];
       const Q12 = matrix[y2][x1];
-
-      const keys = ["R", "G", "B", "A"] as PixelKey[];
 
       keys.forEach((key: "R" | "G" | "B" | "A") => {
         result[y][x][key] =

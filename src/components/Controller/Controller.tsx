@@ -4,7 +4,6 @@ import { makeStyles } from "@material-ui/core/styles";
 import AppBar from "@material-ui/core/AppBar";
 import Box from "@material-ui/core/Box";
 import Container from "@material-ui/core/Container";
-import Button from "@material-ui/core/Button";
 import Grid from "@material-ui/core/Grid";
 import MenuItem from "@material-ui/core/MenuItem";
 import TextField from "@material-ui/core/TextField";
@@ -12,6 +11,9 @@ import TextField from "@material-ui/core/TextField";
 import ImageUploadButton from "src/components/ImageUploadButton";
 
 import { removeDashAndUppercaseFirstLetter } from "src/utils";
+
+import MainController from "./MainController";
+import ControllerSelection from "./ControllerSelection";
 
 import useController, { methodTypes, spatialAlgorithms } from "./useController";
 
@@ -24,12 +26,6 @@ const useStyles = makeStyles((theme) => ({
     right: 0,
     bottom: 0,
     marginBottom: theme.spacing(2),
-  },
-  form: {
-    flexGrow: 1,
-  },
-  select: {
-    minWidth: 120,
   },
 }));
 
@@ -53,23 +49,18 @@ const Controller: React.FC<ControllerProps> = ({
   const fieldList =
     state.methodType === "spatial-resolution"
       ? [
-          <TextField
-            className={classes.select}
+          <ControllerSelection
             label="Algorithm"
             onChange={onChangeTextField("spatial-algorithm")}
-            required
-            select
-            size="small"
             value={state.spatialAlgorithm}
-            variant="outlined"
             defaultValue={8}
           >
             {spatialAlgorithms.map((spatialAlgorithm) => (
-              <MenuItem key={spatialAlgorithm} value={spatialAlgorithm}>
+              <MenuItem key={spatialAlgorithm} value={spatialAlgorithm} dense>
                 {removeDashAndUppercaseFirstLetter(spatialAlgorithm)}
               </MenuItem>
             ))}
-          </TextField>,
+          </ControllerSelection>,
           <TextField
             label="Width"
             onChange={onChangeTextField("width")}
@@ -93,48 +84,37 @@ const Controller: React.FC<ControllerProps> = ({
         ]
       : state.methodType === "gray-level-resolution"
       ? [
-          <TextField
-            className={classes.select}
+          <ControllerSelection
             label="Bit"
             onChange={onChangeTextField("bit")}
-            required
-            select
-            size="small"
             value={state.bit}
-            variant="outlined"
             defaultValue={8}
           >
             {[1, 2, 3, 4, 5, 6, 7, 8].map((value) => (
-              <MenuItem key={value} value={value}>
+              <MenuItem key={value} value={value} dense>
                 {value}
               </MenuItem>
             ))}
-          </TextField>,
+          </ControllerSelection>,
         ]
       : null;
 
   const renderForm = (
-    <Grid container spacing={1}>
+    <Grid container spacing={1} wrap="nowrap">
       <Grid item>
-        <TextField
-          className={classes.select}
+        <ControllerSelection
           label="Method"
           onChange={onChangeMethodType}
-          required
-          select
-          size="small"
           value={state.methodType}
-          variant="outlined"
-          InputLabelProps={{ shrink: true }}
         >
           {methodTypes.map((methodType, i) => (
-            <MenuItem key={`${methodType}i${i}`} value={methodType}>
+            <MenuItem key={`${methodType}i${i}`} value={methodType} dense>
               {methodType
                 ? removeDashAndUppercaseFirstLetter(methodType)
                 : "None"}
             </MenuItem>
           ))}
-        </TextField>
+        </ControllerSelection>
       </Grid>
       {fieldList?.map((component, i) => (
         <Grid key={i} item>
@@ -152,52 +132,30 @@ const Controller: React.FC<ControllerProps> = ({
         position="relative"
         square={false}
       >
-        <Box display="flex" margin={1}>
-          {items.length === 0 ? (
+        {items.length === 0 ? (
+          <Box padding={1}>
             <ImageUploadButton
               label="Please Select Image"
               disabled={isLoading}
               onChange={onImageUploadButtonChange}
             />
-          ) : (
-            <>
-              <Box flexGrow={1}>{renderForm}</Box>
-            </>
-          )}
-        </Box>
-        {items.length > 0 && (
-          <Box display="flex" margin={1} marginTop={0}>
-            <Box marginLeft="auto">
-              <Button
-                color="primary"
-                disabled={!isAddable}
-                onClick={onClickAdd}
-                variant="outlined"
-              >
-                ADD
-              </Button>
-            </Box>
-            <Box marginLeft={1}>
-              <Button
-                variant="outlined"
-                color="secondary"
-                onClick={onClearAllItems}
-              >
-                Clear
-              </Button>
-            </Box>
-            {items.length > 1 && (
-              <Box marginLeft={1}>
-                <Button
-                  variant="outlined"
-                  color="secondary"
-                  onClick={onRemoveLastItem}
-                >
-                  Remove Last
-                </Button>
-              </Box>
-            )}
           </Box>
+        ) : (
+          <>
+            <Box display="flex" margin={1} marginBottom={2}>
+              {renderForm}
+            </Box>
+            <MainController
+              numOfItems={items.length}
+              disabledAdd={!isAddable}
+              showRemove={items.length > 1}
+              source={state.source}
+              onChangeSource={onChangeTextField("source")}
+              onClickAdd={onClickAdd}
+              onClickClear={onClearAllItems}
+              onClickRemove={onRemoveLastItem}
+            />
+          </>
         )}
       </AppBar>
     </Container>

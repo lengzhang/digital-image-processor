@@ -1,19 +1,18 @@
 import Box from "@material-ui/core/Box";
 import Card from "@material-ui/core/Card";
-import CardHeader from "@material-ui/core/CardHeader";
+import CardHeader, { CardHeaderProps } from "@material-ui/core/CardHeader";
 import CardContent from "@material-ui/core/CardContent";
 
 import ImageCanvas from "src/components/ImageCanvas";
 
-interface ImageProps {
-  title: string;
+interface ImageProps extends Pick<CardHeaderProps, "title" | "subheader"> {
   imageData: ImageData | null;
 }
 
-const Image: React.FC<ImageProps> = ({ title, imageData }) => {
+const Image: React.FC<ImageProps> = ({ title, subheader, imageData }) => {
   return (
     <Card>
-      <CardHeader title={title} />
+      <CardHeader title={title} subheader={subheader} />
       <CardContent
         component={Box}
         overflow="auto"

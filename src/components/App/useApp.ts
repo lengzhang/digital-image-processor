@@ -45,7 +45,10 @@ const useApp = () => {
           .then((imageData) => {
             dispatch({
               type: "push-item",
-              item: { title: "Original Image", imageData },
+              item: {
+                title: `Original: ${file.name} (${imageData.width} x ${imageData.height})`,
+                imageData,
+              },
             });
           })
           .finally(() => {});

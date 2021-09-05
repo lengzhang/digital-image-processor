@@ -34,10 +34,11 @@ const ImageUploadButton: React.FC<ImageUploadButtonProps> = ({
       />
       <label htmlFor={id}>
         <Button
-          variant="outlined"
           color="primary"
           component="span"
           disabled={disabled}
+          fullWidth
+          variant="outlined"
         >
           {label}
         </Button>

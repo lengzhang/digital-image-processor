@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useReducer } from "react";
 import { removeDashAndUppercaseFirstLetter } from "src/utils";
 import { nearestNeighborInterpolation } from "src/utils/nearestNeighborInterpolation";
+import { linearInterpolation } from "src/utils/linearInterpolation";
 import { bilinearInterpolation } from "src/utils/bilinearInterpolation";
 import { BitType, grayLevelResolution } from "src/utils/grayLevelResolution";
 import {
@@ -29,6 +30,8 @@ export const spatialAlgorithms: SpatialAlgorithm[] = [
 ];
 
 const initialState: State = {
+  status: "idle",
+  source: 0,
   methodType: "",
   /** Spatial Resolution */
   spatialAlgorithm: "nearest-neighbor-interpolation",
@@ -41,7 +44,11 @@ const initialState: State = {
 const reducer = (state: State, action: Action): State => {
   switch (action.type) {
     case "initialize":
-      state = { ...initialState };
+      state = { ...initialState, ...action.payload };
+      break;
+
+    case "change-source":
+      state = { ...state, source: action.payload };
       break;
 
     case "change-method-type":
@@ -71,7 +78,10 @@ const useController = ({ items, addItem }: UseControllerProps) => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
   useEffect(() => {
-    dispatch({ type: "initialize" });
+    dispatch({
+      type: "initialize",
+      payload: { source: Math.max(items.length - 1, 0) },
+    });
   }, [items]);
 
   const onChangeMethodType: React.ChangeEventHandler<
@@ -86,11 +96,16 @@ const useController = ({ items, addItem }: UseControllerProps) => {
 
   const onChangeTextField =
     (
-      type: "width" | "height" | "bit" | "spatial-algorithm"
+      type: "source" | "width" | "height" | "bit" | "spatial-algorithm"
     ): React.ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement> =>
     (event) => {
       event.preventDefault();
-      if (type === "bit") {
+      if (type === "source") {
+        dispatch({
+          type: `change-${type}`,
+          payload: parseInt(event.target.value) as number,
+        });
+      } else if (type === "bit") {
         dispatch({
           type: `change-${type}`,
           payload: parseInt(event.target.value) as BitType,
@@ -106,9 +121,11 @@ const useController = ({ items, addItem }: UseControllerProps) => {
     };
 
   const onClickAdd = useCallback(async () => {
-    if (state.methodType === "") return;
+    if (state.methodType === "" || state.status === "loading") return;
 
-    const item = items[items.length - 1];
+    dispatch({ type: "set-status", status: "loading" });
+
+    const item = items[state.source];
     const matrix = imageDataToPixelMatrix(item.imageData);
 
     let title = "",
@@ -127,6 +144,12 @@ const useController = ({ items, addItem }: UseControllerProps) => {
               parseInt(state.width),
               parseInt(state.height)
             )
+          : state.spatialAlgorithm === "linear-inerpolation"
+          ? linearInterpolation(
+              matrix,
+              parseInt(state.width),
+              parseInt(state.height)
+            )
           : bilinearInterpolation(
               matrix,
               parseInt(state.width),
@@ -141,7 +164,14 @@ const useController = ({ items, addItem }: UseControllerProps) => {
       imageData = pixelMatrixToImageData(result);
     }
 
-    if (!!title && !!imageData) addItem({ title, imageData });
+    if (!!title && !!imageData)
+      addItem({
+        title: `[${items.length}] ${title}`,
+        subheader: `Source: ${state.source === 0 ? "Origin" : state.source}`,
+        imageData,
+      });
+
+    dispatch({ type: "set-status", status: "idle" });
   }, [state, items, addItem]);
 
   return {

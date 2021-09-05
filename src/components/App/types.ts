@@ -1,5 +1,6 @@
-export interface Item {
-  title: string;
+import { CardHeaderProps } from "@material-ui/core/CardHeader";
+
+export interface Item extends Pick<CardHeaderProps, "title" | "subheader"> {
   imageData: ImageData;
 }
 
