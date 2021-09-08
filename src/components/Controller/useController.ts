@@ -1,8 +1,10 @@
 import { useCallback, useEffect, useReducer } from "react";
 import { removeDashAndUppercaseFirstLetter } from "src/utils";
-import { nearestNeighborInterpolation } from "src/utils/nearestNeighborInterpolation";
-import { linearInterpolation } from "src/utils/linearInterpolation";
-import { bilinearInterpolation } from "src/utils/bilinearInterpolation";
+import {
+  bilinearInterpolation,
+  linearInterpolation,
+  nearestNeighborInterpolation,
+} from "src/utils/spatialResolution";
 import { BitType, grayLevelResolution } from "src/utils/grayLevelResolution";
 import {
   imageDataToPixelMatrix,
@@ -139,18 +141,18 @@ const useController = ({ items, addItem }: UseControllerProps) => {
       } x ${state.height})`;
       const result =
         state.spatialAlgorithm === "nearest-neighbor-interpolation"
-          ? nearestNeighborInterpolation(
+          ? await nearestNeighborInterpolation(
               matrix,
               parseInt(state.width),
               parseInt(state.height)
             )
           : state.spatialAlgorithm === "linear-inerpolation"
-          ? linearInterpolation(
+          ? await linearInterpolation(
               matrix,
               parseInt(state.width),
               parseInt(state.height)
             )
-          : bilinearInterpolation(
+          : await bilinearInterpolation(
               matrix,
               parseInt(state.width),
               parseInt(state.height)
@@ -160,7 +162,7 @@ const useController = ({ items, addItem }: UseControllerProps) => {
       title = `${removeDashAndUppercaseFirstLetter(state.methodType)}: ${
         state.bit
       }-bit`;
-      const result = grayLevelResolution(matrix, state.bit);
+      const result = await grayLevelResolution(matrix, state.bit);
       imageData = pixelMatrixToImageData(result);
     }
 

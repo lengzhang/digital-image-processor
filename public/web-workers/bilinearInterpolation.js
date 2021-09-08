@@ -1,30 +1,45 @@
-import { Pixel, PixelKey } from "./imageDataUtils";
+/**
+ * getClip returns a number within the range
+ * @param {number} x
+ * @param {number} min
+ * @param {number} max
+ * @returns {number}
+ */
+const getClip = (x, min, max) => (x < min ? min : max < x ? max : x);
 
-import { getClip } from "src/utils";
+/**
+ * @typedef Pixel
+ * @property {number} R
+ * @property {number} G
+ * @property {number} B
+ * @property {number} A
+ */
 
-// https://www.cxyzjd.com/article/u012679980/49449647
+/** @type {keyof Pixel} */
+const keys = ["R", "G", "B", "A"];
 
-const keys = ["R", "G", "B", "A"] as PixelKey[];
-
-export const bilinearInterpolation = (
-  matrix: Pixel[][],
-  destWidth: number,
-  destHeight: number
-): Pixel[][] => {
+/**
+ * Bilinear Interpolation
+ * @param {Pixel[][]} matrix
+ * @param {number} destWidth
+ * @param {number} destHeight
+ */
+const bilinearInterpolation = (matrix, destWidth, destHeight) => {
   const srcWidth = matrix[0].length;
   const srcHeight = matrix.length;
 
   const widthRatio = srcWidth / destWidth;
   const heightRatio = srcHeight / destHeight;
 
-  const result: Pixel[][] = Array.from({ length: destHeight }).map(() =>
+  /** @type {Pixel[][]} */
+  const result = Array.from({ length: destHeight }).map(() =>
     Array.from({ length: destWidth }).map(() => ({ R: 0, G: 0, B: 0, A: 0 }))
   );
-
   for (let y = 0; y < destHeight; y++) {
     const srcY = y * heightRatio;
     const j = Math.floor(srcY);
     const b = srcY - j;
+
     for (let x = 0; x < destWidth; x++) {
       const srcX = x * widthRatio;
       const i = Math.floor(srcX);
@@ -50,6 +65,7 @@ export const bilinearInterpolation = (
        *            + ab             Src(i + 1, j + 1)
        *            + (1 - a)b       Src(i, j + 1)
        */
+
       const coffiecent1 = (1 - a) * (1 - b);
       const coffiecent2 = a * (1 - b);
       const coffiecent3 = a * b;
@@ -81,15 +97,29 @@ export const bilinearInterpolation = (
       const Q22 = matrix[y2][x2];
       const Q12 = matrix[y2][x1];
 
-      keys.forEach((key: "R" | "G" | "B" | "A") => {
-        result[y][x][key] =
-          coffiecent1 * Q11[key] +
-          coffiecent2 * Q21[key] +
-          coffiecent3 * Q22[key] +
-          coffiecent4 * Q12[key];
-      });
+      keys.forEach(
+        /**
+         * @param {keyof Pixel} key
+         */
+        (key) => {
+          result[y][x][key] =
+            coffiecent1 * Q11[key] +
+            coffiecent2 * Q21[key] +
+            coffiecent3 * Q22[key] +
+            coffiecent4 * Q12[key];
+        }
+      );
     }
   }
 
   return result;
 };
+
+// eslint-disable-next-line
+self.addEventListener("message", (evt) => {
+  /** @type {[Pixel[][], number, number]} */
+  const [matrix, destWidth, destHeight] = evt.data;
+  const result = bilinearInterpolation(matrix, destWidth, destHeight);
+  // eslint-disable-next-line
+  self.postMessage(result);
+});

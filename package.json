@@ -12,8 +12,7 @@
     "extends": [
       "react-app",
       "react-app/jest"
-    ],
-    "ignorePatterns": "public/web-workers/**/*"
+    ]
   },
   "browserslist": {
     "production": [
