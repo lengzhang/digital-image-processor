@@ -1,11 +1,19 @@
 import React from "react";
 
+import { Pixel, pixelMatrixToImageData } from "src/utils/imageDataUtils";
+
 interface ImageCanvasProps {
-  imageData: ImageData | null;
+  matrix: Pixel[][];
 }
 
-const ImageCanvas: React.FC<ImageCanvasProps> = ({ imageData }) => {
+const ImageCanvas: React.FC<ImageCanvasProps> = ({ matrix }) => {
   const canvasRef = React.useRef<HTMLCanvasElement>(null);
+
+  const [imageData, setImageData] = React.useState<ImageData | null>(null);
+
+  React.useEffect(() => {
+    setImageData(pixelMatrixToImageData(matrix));
+  }, [matrix]);
 
   React.useEffect(() => {
     if (canvasRef.current !== null) {

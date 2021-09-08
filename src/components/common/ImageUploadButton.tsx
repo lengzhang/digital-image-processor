@@ -1,12 +1,15 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 
 import Button from "@material-ui/core/Button";
 
+import { useAppDispatch, useAppSelector } from "src/redux/store";
+
+import { setOriginalFile } from "src/redux/reducer/imageItems";
+
 export interface ImageUploadButtonProps {
   label: string;
   disabled?: boolean;
-  onChange: React.ChangeEventHandler<HTMLInputElement>;
 }
 
 const useStyles = makeStyles((theme) => ({
@@ -16,10 +19,23 @@ const useStyles = makeStyles((theme) => ({
 const ImageUploadButton: React.FC<ImageUploadButtonProps> = ({
   label,
   disabled = false,
-  onChange,
 }) => {
   const id = "image-upload-button";
   const classes = useStyles();
+
+  const { status } = useAppSelector((state) => state.imageItems);
+  const appDispatch = useAppDispatch();
+
+  const onSelectImage: React.ChangeEventHandler<HTMLInputElement> = useCallback(
+    async (event) => {
+      event.preventDefault();
+      const file = event.currentTarget?.files?.item(0) ?? null;
+      if (file !== null && status === "idle") {
+        await appDispatch(setOriginalFile(file));
+      }
+    },
+    [status, appDispatch]
+  );
 
   return (
     <>
@@ -29,7 +45,7 @@ const ImageUploadButton: React.FC<ImageUploadButtonProps> = ({
         accept="image/*"
         multiple={false}
         type="file"
-        onChange={onChange}
+        onChange={onSelectImage}
         disabled={disabled}
       />
       <label htmlFor={id}>
