@@ -55,4 +55,5 @@ self.addEventListener("message", (evt) => {
   const result = grayLevelResolution(matrix, bit);
   // eslint-disable-next-line
   self.postMessage(result);
+  self.close()
 });

@@ -71,4 +71,5 @@ self.addEventListener("message", (evt) => {
   const result = bilinearInterpolation(matrix, destWidth, destHeight);
   // eslint-disable-next-line
   self.postMessage(result);
+  self.close()
 });
