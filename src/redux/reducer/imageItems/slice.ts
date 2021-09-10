@@ -54,19 +54,35 @@ const imageItemsSlice = createSlice<ImageItemsState, ImageItemsAction>({
         }
       );
 
-    /** linearInterpolation */
+    /** linearInterpolation-x */
     builder
-      .addCase(actions.linearInterpolation.pending, (state) => {
-        return { ...state, status: "linear-interpolation" };
+      .addCase(actions.linearInterpolation("x").pending, (state) => {
+        return { ...state, status: "linear-interpolation-x" };
       })
-      .addCase(actions.linearInterpolation.fulfilled, (state, action) => {
+      .addCase(actions.linearInterpolation("x").fulfilled, (state, action) => {
         return {
           ...state,
           status: "idle",
           items: [...state.items, action.payload],
         };
       })
-      .addCase(actions.linearInterpolation.rejected, (state, action) => {
+      .addCase(actions.linearInterpolation("x").rejected, (state, action) => {
+        return { ...state, error: action.error };
+      });
+
+    /** linearInterpolation-y */
+    builder
+      .addCase(actions.linearInterpolation("y").pending, (state) => {
+        return { ...state, status: "linear-interpolation-y" };
+      })
+      .addCase(actions.linearInterpolation("y").fulfilled, (state, action) => {
+        return {
+          ...state,
+          status: "idle",
+          items: [...state.items, action.payload],
+        };
+      })
+      .addCase(actions.linearInterpolation("y").rejected, (state, action) => {
         return { ...state, error: action.error };
       });
 

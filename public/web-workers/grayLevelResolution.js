@@ -48,12 +48,10 @@ const quantize = (gray, level) => {
   return Math.round(ratio) * gap;
 };
 
-// eslint-disable-next-line
-self.addEventListener("message", (evt) => {
+this.self.addEventListener("message", (evt) => {
   /** @type {[Pixel[][], number, number]} */
   const [matrix, bit] = evt.data;
   const result = grayLevelResolution(matrix, bit);
-  // eslint-disable-next-line
-  self.postMessage(result);
-  self.close()
+  this.self.postMessage(result);
+  this.self.close();
 });

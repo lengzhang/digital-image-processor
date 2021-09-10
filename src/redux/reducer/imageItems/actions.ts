@@ -62,34 +62,36 @@ export const nearestNeighborInterpolation = createAsyncThunk<
   }
 );
 
-export const linearInterpolation = createAsyncThunk<
-  SpatialResolutionItem,
-  SpatialResolutionParams,
-  { state: RootState }
->(
-  "imageItems/linearInterpolation",
-  async ({ source, width, height }, thunk) => {
-    const items = thunk.getState().imageItems.items;
+export const linearInterpolation = (coor: "x" | "y") =>
+  createAsyncThunk<
+    SpatialResolutionItem,
+    SpatialResolutionParams,
+    { state: RootState }
+  >(
+    `imageItems/linearInterpolation-${coor}`,
+    async ({ source, width, height }, thunk) => {
+      const items = thunk.getState().imageItems.items;
 
-    if (source < 0 || source >= items.length)
-      throw new Error("source index is out of range");
+      if (source < 0 || source >= items.length)
+        throw new Error("source index is out of range");
 
-    const matrix = await spatialResolution.linearInterpolation(
-      items[source].matrix,
-      width,
-      height
-    );
+      const matrix = await spatialResolution.linearInterpolation(
+        items[source].matrix,
+        width,
+        height,
+        coor
+      );
 
-    return {
-      type: "spatial-resolution",
-      method: "linear-interpolation",
-      source,
-      width,
-      height,
-      matrix,
-    };
-  }
-);
+      return {
+        type: "spatial-resolution",
+        method: `linear-interpolation-${coor}`,
+        source,
+        width,
+        height,
+        matrix,
+      };
+    }
+  );
 
 export const bilinearInterpolation = createAsyncThunk<
   SpatialResolutionItem,

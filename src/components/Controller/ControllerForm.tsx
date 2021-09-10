@@ -26,7 +26,14 @@ const methodItems = [
     value: "nearest-neighbor-interpolation",
     text: "Nearest Neighbor Interpolation",
   },
-  { value: "linear-interpolation", text: "Linear Interpolation" },
+  {
+    value: "linear-interpolation-x",
+    text: "Linear Interpolation (X Coordinate)",
+  },
+  {
+    value: "linear-interpolation-y",
+    text: "Linear Interpolation (Y Coordinate)",
+  },
   { value: "bilinear-interpolation", text: "Bilinear Interpolation" },
 ];
 

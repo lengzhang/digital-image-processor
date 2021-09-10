@@ -5,7 +5,8 @@ import { Pixel } from "src/utils/imageDataUtils";
 
 export type MethodType =
   | "nearest-neighbor-interpolation"
-  | "linear-interpolation"
+  | "linear-interpolation-x"
+  | "linear-interpolation-y"
   | "bilinear-interpolation";
 
 interface DefaultItemProperties {
@@ -39,7 +40,8 @@ export interface ImageItemsState {
     | "idle"
     | "seting-original-file"
     | "nearest-neighbor-interpolation"
-    | "linear-interpolation"
+    | "linear-interpolation-x"
+    | "linear-interpolation-y"
     | "bilinear-interpolation"
     | "gray-level-resolution";
   items: ImageItem[];

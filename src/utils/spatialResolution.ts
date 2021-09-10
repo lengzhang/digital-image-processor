@@ -37,13 +37,15 @@ export const bilinearInterpolation = async (
 export const linearInterpolation = async (
   matrix: Pixel[][],
   destWidth: number,
-  destHeight: number
+  destHeight: number,
+  coor: "x" | "y"
 ) => {
   const result = await runImageProcessWorker(
     LINEAR_INTERPOLATION_WORKER,
     matrix,
     destWidth,
-    destHeight
+    destHeight,
+    coor
   );
   return result;
 };

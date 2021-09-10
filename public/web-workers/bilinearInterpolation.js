@@ -102,11 +102,16 @@ const bilinearInterpolation = (matrix, destWidth, destHeight) => {
          * @param {keyof Pixel} key
          */
         (key) => {
-          result[y][x][key] =
-            coffiecent1 * Q11[key] +
-            coffiecent2 * Q21[key] +
-            coffiecent3 * Q22[key] +
-            coffiecent4 * Q12[key];
+          result[y][x][key] = getClip(
+            Math.round(
+              coffiecent1 * Q11[key] +
+                coffiecent2 * Q21[key] +
+                coffiecent3 * Q22[key] +
+                coffiecent4 * Q12[key]
+            ),
+            0,
+            255
+          );
         }
       );
     }
@@ -115,12 +120,10 @@ const bilinearInterpolation = (matrix, destWidth, destHeight) => {
   return result;
 };
 
-// eslint-disable-next-line
-self.addEventListener("message", (evt) => {
+this.self.addEventListener("message", (evt) => {
   /** @type {[Pixel[][], number, number]} */
   const [matrix, destWidth, destHeight] = evt.data;
   const result = bilinearInterpolation(matrix, destWidth, destHeight);
-  // eslint-disable-next-line
-  self.postMessage(result);
-  self.close()
+  this.self.postMessage(result);
+  this.self.close();
 });

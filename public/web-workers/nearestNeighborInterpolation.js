@@ -21,7 +21,7 @@ const getClip = (x, min, max) => (x < min ? min : max < x ? max : x);
  * @param {number} destWidth
  * @param {number} destHeight
  */
-const bilinearInterpolation = (matrix, destWidth, destHeight) => {
+const nearestNeighborInterpolation = (matrix, destWidth, destHeight) => {
   const srcWidth = matrix[0].length;
   const srcHeight = matrix.length;
 
@@ -47,12 +47,10 @@ const bilinearInterpolation = (matrix, destWidth, destHeight) => {
   return result;
 };
 
-// eslint-disable-next-line
-self.addEventListener("message", (evt) => {
+this.self.addEventListener("message", (evt) => {
   /** @type {[Pixel[][], number, number]} */
   const [matrix, destWidth, destHeight] = evt.data;
-  const result = bilinearInterpolation(matrix, destWidth, destHeight);
-  // eslint-disable-next-line
-  self.postMessage(result);
-  self.close()
+  const result = nearestNeighborInterpolation(matrix, destWidth, destHeight);
+  this.self.postMessage(result);
+  this.self.close();
 });
