@@ -1,22 +1,18 @@
-import { useAppDispatch, useAppSelector } from "src/redux/store";
-
-import {
-  nearestNeighborInterpolation,
-  linearInterpolation,
-  bilinearInterpolation,
-  grayLevelResolution,
-} from "src/redux/reducer/imageItems";
 import { FormApi } from "final-form";
 import { BitType } from "src/utils/grayLevelResolution";
 
-const useController = () => {
-  const { status, items } = useAppSelector(({ imageItems }) => ({
-    status: imageItems.status,
-    items: imageItems.items,
-  }));
-  const dispatch = useAppDispatch();
+import useImageItems from "src/hooks/useImageItems";
 
-  const onSubmit = (values: Record<string, string>, formApi: FormApi) => {
+const useController = () => {
+  const {
+    state,
+    nearestNeighborInterpolation,
+    linearInterpolation,
+    bilinearInterpolation,
+    grayLevelResolution,
+  } = useImageItems();
+
+  const onSubmit = async (values: Record<string, string>, formApi: FormApi) => {
     if (values.type === "spatial-resolution") {
       const interpolationFn =
         values.method === "nearest-neighbor-interpolation"
@@ -26,24 +22,20 @@ const useController = () => {
           : values.method === "linear-interpolation-y"
           ? linearInterpolation("y")
           : bilinearInterpolation;
-      dispatch(
-        interpolationFn({
-          source: parseInt(values.source),
-          width: parseInt(values.width),
-          height: parseInt(values.height),
-        })
-      );
+      await interpolationFn({
+        source: parseInt(values.source),
+        width: parseInt(values.width),
+        height: parseInt(values.height),
+      });
     } else if (values.type === "gray-level-resolution") {
-      dispatch(
-        grayLevelResolution({
-          source: parseInt(values.source),
-          bit: parseInt(values.bit) as BitType,
-        })
-      );
+      await grayLevelResolution({
+        source: parseInt(values.source),
+        bit: parseInt(values.bit) as BitType,
+      });
     }
   };
 
-  return { disabled: status !== "idle", items, onSubmit };
+  return { disabled: state.status !== "idle", items: state.items, onSubmit };
 };
 
 export default useController;

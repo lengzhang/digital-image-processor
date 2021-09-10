@@ -43,7 +43,7 @@ const bitItems = [1, 2, 3, 4, 5, 6, 7, 8].map((v) => ({
 }));
 
 const useStyles = makeStyles((theme) => ({
-  select: {
+  textField: {
     minWidth: 120,
   },
 }));
@@ -75,7 +75,7 @@ const ControllerForm: React.FC<ControllerFormProps> = ({ disabled }) => {
           component={SelectField}
           items={resolutionItems}
           textFieldProps={{
-            className: classes.select,
+            className: classes.textField,
             disabled,
             label: "Resolution",
             variant: "outlined",
@@ -94,7 +94,7 @@ const ControllerForm: React.FC<ControllerFormProps> = ({ disabled }) => {
               component={SelectField}
               items={methodItems}
               textFieldProps={{
-                className: classes.select,
+                className: classes.textField,
                 disabled,
                 label: "Method",
                 variant: "outlined",
@@ -110,6 +110,7 @@ const ControllerForm: React.FC<ControllerFormProps> = ({ disabled }) => {
               name="width"
               component={InputField}
               textFieldProps={{
+                className: classes.textField,
                 label: "Width",
                 required: true,
                 size: "small",
@@ -123,6 +124,7 @@ const ControllerForm: React.FC<ControllerFormProps> = ({ disabled }) => {
               name="height"
               component={InputField}
               textFieldProps={{
+                className: classes.textField,
                 label: "Height",
                 required: true,
                 size: "small",
@@ -140,7 +142,7 @@ const ControllerForm: React.FC<ControllerFormProps> = ({ disabled }) => {
             component={SelectField}
             items={bitItems}
             textFieldProps={{
-              className: classes.select,
+              className: classes.textField,
               disabled,
               label: "Bit",
               variant: "outlined",

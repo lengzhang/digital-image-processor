@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 
 import Box from "@material-ui/core/Box";
 import Divider from "@material-ui/core/Divider";
@@ -7,12 +7,10 @@ import Typography from "@material-ui/core/Typography";
 
 import ImageCanvas from "src/components/common/ImageCanvas";
 
-import { ImageItem } from "src/redux/reducer/imageItems";
-
-import { useAppSelector } from "src/redux/store";
-
 import { removeDashAndUppercaseFirstLetter } from "src/utils";
 import { Pixel } from "src/utils/imageDataUtils";
+
+import useImageItems, { ImageItem } from "src/hooks/useImageItems";
 
 interface ImageBlockProps {
   index: number;
@@ -25,12 +23,14 @@ interface Item {
 }
 
 const ImageBlock: React.FC<ImageBlockProps> = ({ index, item }) => {
-  const [list, setList] = React.useState<Item[]>([]);
-  const source = useAppSelector((state) =>
-    state.imageItems.items.find((_, i) => i === item.source)
+  const { state } = useImageItems();
+
+  const source = useMemo(
+    () => state.items.find((_, i) => i === item.source),
+    [state.items, item.source]
   );
 
-  React.useEffect(() => {
+  const list = useMemo(() => {
     const newList: Item[] = [];
     if (!!source) {
       newList.push({
@@ -44,8 +44,8 @@ const ImageBlock: React.FC<ImageBlockProps> = ({ index, item }) => {
       } x ${item.matrix.length})`,
       matrix: item.matrix,
     });
-    setList(newList);
-  }, [index, item, source]);
+    return newList;
+  }, [index, item.matrix, source]);
 
   const title = React.useMemo(
     () =>
@@ -87,7 +87,7 @@ const ImageBlock: React.FC<ImageBlockProps> = ({ index, item }) => {
               <Typography display="block" noWrap>
                 {text}
               </Typography>
-              <Box maxHeight={600} overflow="auto">
+              <Box maxWidth={600} maxHeight={600} overflow="auto">
                 <ImageCanvas matrix={matrix} />
               </Box>
             </Box>

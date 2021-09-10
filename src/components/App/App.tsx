@@ -7,10 +7,10 @@ import Grid from "@material-ui/core/Grid";
 import Controller from "src/components/Controller";
 import ImageBlock from "src/components/common/ImageBlock";
 
-import useApp from "./useApp";
+import useImageItems, { ImageItemsProvider } from "src/hooks/useImageItems";
 
 const App = () => {
-  const { items } = useApp();
+  const { state } = useImageItems();
 
   return (
     <>
@@ -18,7 +18,7 @@ const App = () => {
       <Container maxWidth="lg">
         <Box marginTop={2} marginBottom={20}>
           <Grid container spacing={2} direction="column">
-            {items.map((item, i) => (
+            {state.items.map((item, i) => (
               <Grid key={i} item component={Box} width="100%">
                 <ImageBlock index={i} item={item} />
               </Grid>
@@ -31,4 +31,12 @@ const App = () => {
   );
 };
 
-export default App;
+const AppWithProvider = () => {
+  return (
+    <ImageItemsProvider>
+      <App />
+    </ImageItemsProvider>
+  );
+};
+
+export default AppWithProvider;

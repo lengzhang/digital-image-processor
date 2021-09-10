@@ -3,9 +3,7 @@ import { makeStyles } from "@material-ui/core/styles";
 
 import Button from "@material-ui/core/Button";
 
-import { useAppDispatch, useAppSelector } from "src/redux/store";
-
-import { setOriginalFile } from "src/redux/reducer/imageItems";
+import useImageItems from "src/hooks/useImageItems";
 
 export interface ImageUploadButtonProps {
   label: string;
@@ -23,18 +21,17 @@ const ImageUploadButton: React.FC<ImageUploadButtonProps> = ({
   const id = "image-upload-button";
   const classes = useStyles();
 
-  const { status } = useAppSelector((state) => state.imageItems);
-  const appDispatch = useAppDispatch();
+  const { state, addOriginalImage } = useImageItems();
 
   const onSelectImage: React.ChangeEventHandler<HTMLInputElement> = useCallback(
     async (event) => {
       event.preventDefault();
       const file = event.currentTarget?.files?.item(0) ?? null;
-      if (file !== null && status === "idle") {
-        await appDispatch(setOriginalFile(file));
+      if (file !== null && state.status === "idle") {
+        await addOriginalImage(file);
       }
     },
-    [status, appDispatch]
+    [state.status, addOriginalImage]
   );
 
   return (

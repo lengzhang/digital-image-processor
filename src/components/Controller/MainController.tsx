@@ -8,9 +8,7 @@ import SelectField from "src/components/common/SelectField";
 
 import { Field, useForm } from "react-final-form";
 
-import { useAppDispatch, useAppSelector } from "src/redux/store";
-
-import { actions } from "src/redux/reducer/imageItems";
+import useImageItems from "src/hooks/useImageItems";
 
 interface MainControllerProps {
   disabled?: boolean;
@@ -24,25 +22,24 @@ const useStyles = makeStyles((theme) => ({
 
 const MainController: React.FC<MainControllerProps> = ({ disabled }) => {
   const classes = useStyles();
-  const items = useAppSelector((state) => state.imageItems.items);
-  const dispatch = useAppDispatch();
+  const {
+    state: { items },
+    initialize,
+    popItem,
+  } = useImageItems();
 
   const formApi = useForm();
 
-  React.useEffect(
-    () => {
-      formApi.reset({ source: items.length === 0 ? 0 : items.length - 1 });
-    },
-    // eslint-disable-next-line
-    [items]
-  );
+  React.useEffect(() => {
+    formApi.reset({ source: items.length === 0 ? 0 : items.length - 1 });
+  }, [formApi, items]);
 
   const onClearAllItems = () => {
-    dispatch(actions.initialize());
+    initialize();
   };
 
   const onRemoveLastItem = () => {
-    dispatch(actions.popItem());
+    popItem();
   };
 
   const sourceItems = React.useMemo(
