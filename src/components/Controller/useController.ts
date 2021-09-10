@@ -1,5 +1,6 @@
 import { FormApi } from "final-form";
 import { BitType } from "src/utils/grayLevelResolution";
+import { scrollToBottom } from "src/utils";
 
 import useImageItems from "src/hooks/useImageItems";
 
@@ -33,6 +34,7 @@ const useController = () => {
         bit: parseInt(values.bit) as BitType,
       });
     }
+    scrollToBottom();
   };
 
   return { disabled: state.status !== "idle", items: state.items, onSubmit };

@@ -16,7 +16,7 @@ const App = () => {
     <>
       <CssBaseline />
       <Container maxWidth="lg">
-        <Box marginTop={2} marginBottom={20}>
+        <Box paddingTop={2} paddingBottom={20}>
           <Grid container spacing={2} direction="column">
             {state.items.map((item, i) => (
               <Grid key={i} item component={Box} width="100%">
