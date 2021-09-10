@@ -39,15 +39,15 @@ const ImageBlock: React.FC<ImageBlockProps> = ({ index, item }) => {
       });
     }
     newList.push({
-      text: `${index === 0 ? "Original" : "Result"} (${
-        item.matrix[0].length
-      } x ${item.matrix.length})`,
+      text: `${index === 0 ? "" : "Result"} (${item.matrix[0].length} x ${
+        item.matrix.length
+      })`,
       matrix: item.matrix,
     });
     return newList;
   }, [index, item.matrix, source]);
 
-  const title = React.useMemo(
+  const title = useMemo(
     () =>
       (index === 0 ? "" : `[${index}] `) +
       removeDashAndUppercaseFirstLetter(item.type) +
@@ -57,18 +57,26 @@ const ImageBlock: React.FC<ImageBlockProps> = ({ index, item }) => {
     [index, item]
   );
 
-  const subheader = React.useMemo(
+  const subheader1 = useMemo(
     () =>
-      item.type === "original"
-        ? `(${item.matrix[0].length} x ${item.matrix.length})`
-        : item.type === "spatial-resolution"
-        ? (source !== undefined
-            ? `(${source.matrix[0].length} x ${source.matrix.length}) => `
-            : "") + `(${item.width} x ${item.height})`
-        : item.type === "gray-level-resolution"
-        ? `${item.bit}-bit`
+      item.type === "spatial-resolution"
+        ? source !== undefined
+          ? `Source: ${item.source === 0 ? "Original" : `[${item.source}]`}(${
+              source.matrix[0].length
+            } x ${source.matrix.length})`
+          : undefined
         : undefined,
     [item, source]
+  );
+
+  const subheader2 = useMemo(
+    () =>
+      item.type === "spatial-resolution"
+        ? `Result: [${index}](${item.width} x ${item.height})`
+        : item.type === "gray-level-resolution"
+        ? `Result: ${item.bit}-bit`
+        : undefined,
+    [item, index]
   );
 
   return (
@@ -76,9 +84,16 @@ const ImageBlock: React.FC<ImageBlockProps> = ({ index, item }) => {
       <Paper>
         <Box padding={2}>
           <Typography variant="h6">{title}</Typography>
-          <Typography component={Box} paddingTop={2} variant="subtitle2">
-            {subheader}
-          </Typography>
+          {subheader1 && (
+            <Typography component={Box} paddingTop={2} variant="subtitle2">
+              {subheader1}
+            </Typography>
+          )}
+          {subheader2 && (
+            <Typography component={Box} paddingTop={2} variant="subtitle2">
+              {subheader2}
+            </Typography>
+          )}
         </Box>
         <Divider light variant="fullWidth" />
         <Box display="flex" flexWrap="no-wrap" style={{ overflowX: "auto" }}>
