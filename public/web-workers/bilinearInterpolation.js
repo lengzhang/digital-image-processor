@@ -1,3 +1,4 @@
+// https://www.cxyzjd.com/article/u012679980/49449647
 /**
  * getClip returns a number within the range
  * @param {number} x

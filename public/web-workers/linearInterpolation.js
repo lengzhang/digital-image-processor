@@ -42,11 +42,10 @@ const xCoorCalculation = (matrix, target, i, j, srcX, srcWidth) => {
      * @param {keyof Pixel} key
      */
     (key) => {
-      target[key] = getClip(
-        Math.round(p0[key] + ((srcX - x0) * (p1[key] - p0[key])) / (x1 - x0)),
-        0,
-        255
+      const p = Math.round(
+        p0[key] + ((srcX - x0) * (p1[key] - p0[key])) / (x1 - x0)
       );
+      target[key] = getClip(p, 0, 255);
     }
   );
 };
@@ -75,11 +74,10 @@ const yCoorCalculation = (matrix, target, i, j, srcY, srcHeight) => {
      * @param {keyof Pixel} key
      */
     (key) => {
-      target[key] = getClip(
-        Math.round(p0[key] + ((srcY - y0) * (p1[key] - p0[key])) / (y1 - y0)),
-        0,
-        255
+      const p = Math.round(
+        p0[key] + ((srcY - y0) * (p1[key] - p0[key])) / (y1 - y0)
       );
+      target[key] = getClip(p, 0, 255);
     }
   );
 };
