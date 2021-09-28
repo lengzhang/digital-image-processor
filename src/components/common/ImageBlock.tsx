@@ -35,7 +35,7 @@ const ImageBlock: React.FC<ImageBlockProps> = ({ index, item }) => {
     const newList: Item[] = [];
     if (!!source) {
       newList.push({
-        text: `Source (${source.matrix[0].length} x ${source.matrix.length})`,
+        text: `Source[${item.source}] (${source.matrix[0].length} x ${source.matrix.length})`,
         matrix: source.matrix,
         imageItem: source,
       });
@@ -60,43 +60,11 @@ const ImageBlock: React.FC<ImageBlockProps> = ({ index, item }) => {
     [index, item]
   );
 
-  const subheader1 = useMemo(
-    () =>
-      item.type === "spatial-resolution"
-        ? source !== undefined
-          ? `Source: ${item.source === 0 ? "Original" : `[${item.source}]`}(${
-              source.matrix[0].length
-            } x ${source.matrix.length})`
-          : undefined
-        : undefined,
-    [item, source]
-  );
-
-  const subheader2 = useMemo(
-    () =>
-      item.type === "spatial-resolution"
-        ? `Result: [${index}](${item.width} x ${item.height})`
-        : item.type === "gray-level-resolution"
-        ? `Result: ${item.bit}-bit`
-        : undefined,
-    [item, index]
-  );
-
   return (
     <Box>
       <Paper>
         <Box padding={2}>
           <Typography variant="h6">{title}</Typography>
-          {subheader1 && (
-            <Typography component={Box} paddingTop={2} variant="subtitle2">
-              {subheader1}
-            </Typography>
-          )}
-          {subheader2 && (
-            <Typography component={Box} paddingTop={2} variant="subtitle2">
-              {subheader2}
-            </Typography>
-          )}
         </Box>
         <Divider light variant="fullWidth" />
         <Box display="flex" flexWrap="no-wrap" style={{ overflowX: "auto" }}>
