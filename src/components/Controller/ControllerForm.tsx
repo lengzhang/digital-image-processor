@@ -17,7 +17,12 @@ interface ControllerFormProps {
   items: ImageItem[];
 }
 
-const resolutionItems: { value: string; text: string }[] = [
+interface SelectionItem {
+  value: string | number;
+  text: string;
+}
+
+const resolutionItems: SelectionItem[] = [
   { value: "", text: "None" },
   { value: "spatial-resolution", text: "Spatial Resolution" },
   {
@@ -25,12 +30,16 @@ const resolutionItems: { value: string; text: string }[] = [
     text: "Gray Level Resolution",
   },
   {
+    value: "histogram-equalization",
+    text: "Histogram Equalization",
+  },
+  {
     value: "bit-planes-removing",
     text: "Bit Planes Removing",
   },
 ];
 
-const methodItems = [
+const methodItems: SelectionItem[] = [
   {
     value: "nearest-neighbor-interpolation",
     text: "Nearest Neighbor Interpolation",
@@ -44,6 +53,15 @@ const methodItems = [
     text: "Linear Interpolation (Y Coordinate)",
   },
   { value: "bilinear-interpolation", text: "Bilinear Interpolation" },
+];
+
+const histogramEqualizationItems: SelectionItem[] = [
+  { value: "global", text: "Global" },
+  { value: "local", text: "Local" },
+];
+
+const histogramEqualizationLocalItems: SelectionItem[] = [
+  { value: 3, text: "3x3" },
 ];
 
 const bitItems = [1, 2, 3, 4, 5, 6, 7, 8].map((v) => ({
@@ -60,24 +78,24 @@ const useStyles = makeStyles((theme) => ({
 const ControllerForm: React.FC<ControllerFormProps> = ({ disabled, items }) => {
   const classes = useStyles();
   const formApi = useForm();
-  const { type, source } = useFormState().values;
+  const values = useFormState().values;
 
   const sourceItem = React.useMemo(
-    () => items?.[parseInt(source)] ?? null,
-    [items, source]
+    () => items?.[parseInt(values.source)] ?? null,
+    [items, values.source]
   );
 
   React.useEffect(
     () => {
       formApi.reset({
-        type,
-        source,
+        type: values.type,
+        source: values.source,
         method: "nearest-neighbor-interpolation",
         bit: "8",
       });
     },
     // eslint-disable-next-line
-    [type]
+    [values.type]
   );
 
   return (
@@ -99,7 +117,7 @@ const ControllerForm: React.FC<ControllerFormProps> = ({ disabled, items }) => {
           }}
         />
       </Grid>
-      {type === "spatial-resolution" && (
+      {values.type === "spatial-resolution" && (
         <>
           <Grid item>
             <Field
@@ -148,7 +166,7 @@ const ControllerForm: React.FC<ControllerFormProps> = ({ disabled, items }) => {
           </Grid>
         </>
       )}
-      {type === "gray-level-resolution" && (
+      {values.type === "gray-level-resolution" && (
         <Grid item>
           <Field
             allowNull
@@ -167,7 +185,47 @@ const ControllerForm: React.FC<ControllerFormProps> = ({ disabled, items }) => {
           />
         </Grid>
       )}
-      {type === "bit-planes-removing" &&
+      {values.type === "histogram-equalization" && (
+        <>
+          <Grid item>
+            <Field
+              allowNull
+              name="histogram-equalization-type"
+              component={SelectField}
+              items={histogramEqualizationItems}
+              textFieldProps={{
+                className: classes.textField,
+                disabled,
+                label: "Type",
+                variant: "outlined",
+                required: true,
+                size: "small",
+                SelectProps: { autoWidth: true },
+              }}
+            />
+          </Grid>
+          {values?.["histogram-equalization-type"] === "local" && (
+            <Grid item>
+              <Field
+                allowNull
+                name="histogram-equalization-local-size"
+                component={SelectField}
+                items={histogramEqualizationLocalItems}
+                textFieldProps={{
+                  className: classes.textField,
+                  disabled,
+                  label: "Size",
+                  variant: "outlined",
+                  required: true,
+                  size: "small",
+                  SelectProps: { autoWidth: true },
+                }}
+              />
+            </Grid>
+          )}
+        </>
+      )}
+      {values.type === "bit-planes-removing" &&
         (sourceItem !== null ? (
           <Grid item>
             <Field

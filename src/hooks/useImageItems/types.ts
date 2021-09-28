@@ -39,6 +39,11 @@ export interface BitPlanesRemovingItem extends DefaultItemProperties {
   bits: number;
 }
 
+/** Histogram Equalization */
+export interface HistogramEqualizationItem extends DefaultItemProperties {
+  type: "histogram-equalization";
+}
+
 type ImageItemsStatus =
   | "idle"
   | "seting-original-file"
@@ -47,13 +52,15 @@ type ImageItemsStatus =
   | "linear-interpolation-y"
   | "bilinear-interpolation"
   | "gray-level-resolution"
-  | "bit-planes-removing";
+  | "bit-planes-removing"
+  | "histogram-equalization";
 
 export type ImageItem =
   | OriginalItem
   | SpatialResolutionItem
   | GrayLevelResolutionItem
-  | BitPlanesRemovingItem;
+  | BitPlanesRemovingItem
+  | HistogramEqualizationItem;
 
 export interface ImageItemsState {
   status: ImageItemsStatus;
@@ -86,6 +93,12 @@ export interface BitPlanesRemovingParams {
   bits: number;
 }
 
+/** Histogram Equalization */
+export interface HistogramEqualizationParams {
+  source: number;
+  size?: number; // Mash size for local
+}
+
 export interface ImageItemsContext {
   state: ImageItemsState;
   initialize: () => void;
@@ -100,4 +113,5 @@ export interface ImageItemsContext {
   bilinearInterpolation: (params: SpatialResolutionParams) => Promise<void>;
   grayLevelResolution: (params: GrayLevelResolutionParams) => Promise<void>;
   bitPlanesRemoving: (params: BitPlanesRemovingParams) => Promise<void>;
+  histogramEqualization: (params: HistogramEqualizationParams) => Promise<void>;
 }

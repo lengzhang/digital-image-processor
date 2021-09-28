@@ -12,6 +12,7 @@ const useController = () => {
     bilinearInterpolation,
     grayLevelResolution,
     bitPlanesRemoving,
+    histogramEqualization,
   } = useImageItems();
 
   const onSubmit = async (values: Record<string, string>, formApi: FormApi) => {
@@ -40,6 +41,14 @@ const useController = () => {
       await bitPlanesRemoving({
         source: parseInt(values.source),
         bits: parseInt(values.bits),
+      });
+    } else if (values.type === "histogram-equalization") {
+      await histogramEqualization({
+        source: parseInt(values.source),
+        size:
+          values["histogram-equalization-type"] === "local"
+            ? parseInt(values["histogram-equalization-local-size"]) || undefined
+            : undefined,
       });
     }
     scrollToBottom();

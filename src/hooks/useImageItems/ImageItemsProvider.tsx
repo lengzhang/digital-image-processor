@@ -6,6 +6,7 @@ import {
 import * as spatialResolution from "src/utils/spatialResolution";
 import { grayLevelResolution as glResolution } from "src/utils/grayLevelResolution";
 import { bitPlanesRemoving as bpRemoving } from "src/utils/bitPlanesRemoving";
+import { histogramEqualization as hEqualization } from "src/utils/histogramEqualization";
 
 import { imageItemsContext } from "./context";
 import {
@@ -14,8 +15,9 @@ import {
   ImageItemsAction,
   OriginalItem,
   GrayLevelResolutionParams,
+  BitPlanesRemovingParams,
+  HistogramEqualizationParams,
 } from "./types";
-import { BitPlanesRemovingParams } from "./types";
 
 const initialState: ImageItemsState = {
   status: "idle",
@@ -278,6 +280,40 @@ const ImageItemsProvider: React.FC = ({ children }) => {
     [state.items]
   );
 
+  const histogramEqualization = useCallback(
+    async ({ source, size }: HistogramEqualizationParams) => {
+      try {
+        dispatch({ type: "set-status", status: "histogram-equalization" });
+        const items = state.items;
+        if (source < 0 || source >= items.length) {
+          throw new Error("source index is out of range");
+        }
+
+        const sourceItem = items[source];
+
+        const matrix = await hEqualization(sourceItem.matrix, size);
+
+        dispatch({
+          type: "push-item",
+          item: {
+            type: "histogram-equalization",
+            matrix,
+            source,
+            bit: sourceItem.bit,
+            isGrayScaled: sourceItem.isGrayScaled,
+          },
+        });
+      } catch (error: any) {
+        dispatch({
+          type: "set-error",
+          error: error?.message ?? "Calculating histogram equalization faile",
+        });
+      }
+      dispatch({ type: "set-status", status: "idle" });
+    },
+    [state.items]
+  );
+
   return (
     <imageItemsContext.Provider
       value={{
@@ -290,6 +326,7 @@ const ImageItemsProvider: React.FC = ({ children }) => {
         bilinearInterpolation,
         grayLevelResolution,
         bitPlanesRemoving,
+        histogramEqualization,
       }}
     >
       {children}
