@@ -16,8 +16,6 @@ const useController = () => {
   } = useImageItems();
 
   const onSubmit = async (values: Record<string, string>, formApi: FormApi) => {
-    console.log("values: ", values);
-
     if (values.type === "spatial-resolution") {
       const interpolationFn =
         values.method === "nearest-neighbor-interpolation"
