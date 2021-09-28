@@ -49,6 +49,7 @@ const calculateGray = (pixel, level) => {
 
   /** Quantize gray level value when target level is not 8-bit */
   if (level !== 256) gray = quantize(gray, level);
+  else gray = Math.round(gray);
 
   return { ...pixel, R: gray, G: gray, B: gray };
 };
