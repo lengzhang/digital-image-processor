@@ -1,23 +1,32 @@
 import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 
+import Box from "@material-ui/core/Box";
 import Grid from "@material-ui/core/Grid";
+import Typography from "@material-ui/core/Typography";
 
 import { Field, useFormState, useForm } from "react-final-form";
 
 import SelectField from "src/components/common/SelectField";
 import InputField from "src/components/common/InputField";
+import BitsCheckboxField from "src/components/common/BitsCheckboxField";
+import { ImageItem } from "src/hooks/useImageItems";
 
 interface ControllerFormProps {
   disabled?: boolean;
+  items: ImageItem[];
 }
 
-const resolutionItems = [
+const resolutionItems: { value: string; text: string }[] = [
   { value: "", text: "None" },
   { value: "spatial-resolution", text: "Spatial Resolution" },
   {
     value: "gray-level-resolution",
     text: "Gray Level Resolution",
+  },
+  {
+    value: "bit-planes-removing",
+    text: "Bit Planes Removing",
   },
 ];
 
@@ -48,10 +57,15 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const ControllerForm: React.FC<ControllerFormProps> = ({ disabled }) => {
+const ControllerForm: React.FC<ControllerFormProps> = ({ disabled, items }) => {
   const classes = useStyles();
   const formApi = useForm();
   const { type, source } = useFormState().values;
+
+  const sourceItem = React.useMemo(
+    () => items?.[parseInt(source)] ?? null,
+    [items, source]
+  );
 
   React.useEffect(
     () => {
@@ -153,6 +167,21 @@ const ControllerForm: React.FC<ControllerFormProps> = ({ disabled }) => {
           />
         </Grid>
       )}
+      {type === "bit-planes-removing" &&
+        (sourceItem !== null ? (
+          <Grid item>
+            <Field
+              allowNull
+              name="bits"
+              type="number"
+              component={BitsCheckboxField}
+            />
+          </Grid>
+        ) : (
+          <Grid item component={Box} alignSelf="center" flexGrow={1}>
+            <Typography>Source Item Not Found!!</Typography>
+          </Grid>
+        ))}
     </Grid>
   );
 };

@@ -69,7 +69,7 @@ const Controller = () => {
                   paddingBottom={1}
                   overflow="auto"
                 >
-                  <ControllerForm disabled={disabled} />
+                  <ControllerForm disabled={disabled} items={items} />
                 </Toolbar>
                 <Toolbar
                   variant="dense"

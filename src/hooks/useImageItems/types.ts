@@ -33,6 +33,12 @@ export interface GrayLevelResolutionItem extends DefaultItemProperties {
   bit: BitType;
 }
 
+/** Bit Planes Removing */
+export interface BitPlanesRemovingItem extends DefaultItemProperties {
+  type: "bit-planes-removing";
+  bits: number;
+}
+
 type ImageItemsStatus =
   | "idle"
   | "seting-original-file"
@@ -40,12 +46,14 @@ type ImageItemsStatus =
   | "linear-interpolation-x"
   | "linear-interpolation-y"
   | "bilinear-interpolation"
-  | "gray-level-resolution";
+  | "gray-level-resolution"
+  | "bit-planes-removing";
 
 export type ImageItem =
   | OriginalItem
   | SpatialResolutionItem
-  | GrayLevelResolutionItem;
+  | GrayLevelResolutionItem
+  | BitPlanesRemovingItem;
 
 export interface ImageItemsState {
   status: ImageItemsStatus;
@@ -72,6 +80,12 @@ export interface GrayLevelResolutionParams {
   bit?: BitType;
 }
 
+/** Bit Planes Removing */
+export interface BitPlanesRemovingParams {
+  source: number;
+  bits: number;
+}
+
 export interface ImageItemsContext {
   state: ImageItemsState;
   initialize: () => void;
@@ -85,4 +99,5 @@ export interface ImageItemsContext {
   ) => (params: SpatialResolutionParams) => Promise<void>;
   bilinearInterpolation: (params: SpatialResolutionParams) => Promise<void>;
   grayLevelResolution: (params: GrayLevelResolutionParams) => Promise<void>;
+  bitPlanesRemoving: (params: BitPlanesRemovingParams) => Promise<void>;
 }

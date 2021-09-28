@@ -11,9 +11,12 @@ const useController = () => {
     linearInterpolation,
     bilinearInterpolation,
     grayLevelResolution,
+    bitPlanesRemoving,
   } = useImageItems();
 
   const onSubmit = async (values: Record<string, string>, formApi: FormApi) => {
+    console.log("values: ", values);
+
     if (values.type === "spatial-resolution") {
       const interpolationFn =
         values.method === "nearest-neighbor-interpolation"
@@ -32,6 +35,11 @@ const useController = () => {
       await grayLevelResolution({
         source: parseInt(values.source),
         bit: parseInt(values.bit) as BitType,
+      });
+    } else if (values.type === "bit-planes-removing") {
+      await bitPlanesRemoving({
+        source: parseInt(values.source),
+        bits: parseInt(values.bits),
       });
     }
     scrollToBottom();

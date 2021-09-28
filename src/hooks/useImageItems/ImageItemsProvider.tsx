@@ -5,6 +5,7 @@ import {
 } from "src/utils/imageDataUtils";
 import * as spatialResolution from "src/utils/spatialResolution";
 import { grayLevelResolution as glResolution } from "src/utils/grayLevelResolution";
+import { bitPlanesRemoving as bpRemoving } from "src/utils/bitPlanesRemoving";
 
 import { imageItemsContext } from "./context";
 import {
@@ -14,6 +15,7 @@ import {
   OriginalItem,
   GrayLevelResolutionParams,
 } from "./types";
+import { BitPlanesRemovingParams } from "./types";
 
 const initialState: ImageItemsState = {
   status: "idle",
@@ -54,7 +56,6 @@ const reducer = (
 
 const ImageItemsProvider: React.FC = ({ children }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
-  console.log(state);
 
   const initialize = () => {
     dispatch({ type: "initialize" });
@@ -77,6 +78,7 @@ const ImageItemsProvider: React.FC = ({ children }) => {
     dispatch({ type: "push-item", item });
   };
 
+  /** Nearest Neighbor Interpolation */
   const nearestNeighborInterpolation = useCallback(
     async (params: SpatialResolutionParams) => {
       try {
@@ -121,6 +123,7 @@ const ImageItemsProvider: React.FC = ({ children }) => {
     [state.items]
   );
 
+  /** Linear Interpolation */
   const linearInterpolation = useCallback(
     (coor: "x" | "y") => async (params: SpatialResolutionParams) => {
       try {
@@ -164,6 +167,7 @@ const ImageItemsProvider: React.FC = ({ children }) => {
     [state.items]
   );
 
+  /** Bilinear Interpolation */
   const bilinearInterpolation = useCallback(
     async (params: SpatialResolutionParams) => {
       try {
@@ -203,6 +207,7 @@ const ImageItemsProvider: React.FC = ({ children }) => {
     [state.items]
   );
 
+  /** Gray Level Resolution */
   const grayLevelResolution = useCallback(
     async ({ source, bit = 8 }: GrayLevelResolutionParams) => {
       try {
@@ -235,6 +240,44 @@ const ImageItemsProvider: React.FC = ({ children }) => {
     [state.items]
   );
 
+  /** Bit Planes Removing */
+  const bitPlanesRemoving = useCallback(
+    async ({ source, bits }: BitPlanesRemovingParams) => {
+      try {
+        dispatch({ type: "set-status", status: "bit-planes-removing" });
+        const items = state.items;
+        if (source < 0 || source >= items.length) {
+          throw new Error("source index is out of range");
+        }
+
+        const sourceItem = items[source];
+
+        if (Number.isNaN(bits)) bits = Math.pow(2, sourceItem.bit) - 1;
+
+        const matrix = await bpRemoving(sourceItem.matrix, bits);
+
+        dispatch({
+          type: "push-item",
+          item: {
+            type: "bit-planes-removing",
+            matrix,
+            source,
+            bit: sourceItem.bit,
+            bits,
+            isGrayScaled: sourceItem.isGrayScaled,
+          },
+        });
+      } catch (error: any) {
+        dispatch({
+          type: "set-error",
+          error: error?.message ?? "Calculating bit planes removing faile",
+        });
+      }
+      dispatch({ type: "set-status", status: "idle" });
+    },
+    [state.items]
+  );
+
   return (
     <imageItemsContext.Provider
       value={{
@@ -246,6 +289,7 @@ const ImageItemsProvider: React.FC = ({ children }) => {
         linearInterpolation,
         bilinearInterpolation,
         grayLevelResolution,
+        bitPlanesRemoving,
       }}
     >
       {children}
