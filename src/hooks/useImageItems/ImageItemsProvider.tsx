@@ -54,6 +54,7 @@ const reducer = (
 
 const ImageItemsProvider: React.FC = ({ children }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
+  console.log(state);
 
   const initialize = () => {
     dispatch({ type: "initialize" });
@@ -66,7 +67,13 @@ const ImageItemsProvider: React.FC = ({ children }) => {
   const addOriginalImage = async (file: File) => {
     const imageData = await imageFileToImageData(file);
     const matrix = imageDataToPixelMatrix(imageData);
-    const item: OriginalItem = { type: "original", matrix, source: null };
+    const item: OriginalItem = {
+      type: "original",
+      matrix,
+      source: null,
+      bit: 8,
+      isGrayScaled: false,
+    };
     dispatch({ type: "push-item", item });
   };
 
@@ -82,8 +89,10 @@ const ImageItemsProvider: React.FC = ({ children }) => {
           throw new Error("source index is out of range");
         }
 
+        const sourceItem = items[params.source];
+
         const matrix = await spatialResolution.nearestNeighborInterpolation(
-          items[params.source].matrix,
+          sourceItem.matrix,
           params.width,
           params.height
         );
@@ -94,6 +103,8 @@ const ImageItemsProvider: React.FC = ({ children }) => {
             type: "spatial-resolution",
             method: "nearest-neighbor-interpolation",
             matrix,
+            bit: sourceItem.bit,
+            isGrayScaled: false,
             ...params,
           },
         });
@@ -122,8 +133,10 @@ const ImageItemsProvider: React.FC = ({ children }) => {
           throw new Error("source index is out of range");
         }
 
+        const sourceItem = items[params.source];
+
         const matrix = await spatialResolution.linearInterpolation(
-          items[params.source].matrix,
+          sourceItem.matrix,
           params.width,
           params.height,
           coor
@@ -135,6 +148,8 @@ const ImageItemsProvider: React.FC = ({ children }) => {
             type: "spatial-resolution",
             method: `linear-interpolation-${coor}`,
             matrix,
+            bit: sourceItem.bit,
+            isGrayScaled: false,
             ...params,
           },
         });
@@ -164,12 +179,16 @@ const ImageItemsProvider: React.FC = ({ children }) => {
           params.height
         );
 
+        const sourceItem = items[params.source];
+
         dispatch({
           type: "push-item",
           item: {
             type: "spatial-resolution",
             method: "bilinear-interpolation",
             matrix,
+            bit: sourceItem.bit,
+            isGrayScaled: false,
             ...params,
           },
         });
@@ -197,7 +216,13 @@ const ImageItemsProvider: React.FC = ({ children }) => {
 
         dispatch({
           type: "push-item",
-          item: { type: "gray-level-resolution", matrix, source, bit },
+          item: {
+            type: "gray-level-resolution",
+            matrix,
+            source,
+            bit,
+            isGrayScaled: true,
+          },
         });
       } catch (error: any) {
         dispatch({

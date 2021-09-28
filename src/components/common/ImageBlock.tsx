@@ -20,6 +20,7 @@ interface ImageBlockProps {
 interface Item {
   text: string;
   matrix: Pixel[][];
+  imageItem: ImageItem;
 }
 
 const ImageBlock: React.FC<ImageBlockProps> = ({ index, item }) => {
@@ -36,6 +37,7 @@ const ImageBlock: React.FC<ImageBlockProps> = ({ index, item }) => {
       newList.push({
         text: `Source (${source.matrix[0].length} x ${source.matrix.length})`,
         matrix: source.matrix,
+        imageItem: source,
       });
     }
     newList.push({
@@ -43,9 +45,10 @@ const ImageBlock: React.FC<ImageBlockProps> = ({ index, item }) => {
         item.matrix.length
       })`,
       matrix: item.matrix,
+      imageItem: item,
     });
     return newList;
-  }, [index, item.matrix, source]);
+  }, [index, item, source]);
 
   const title = useMemo(
     () =>
@@ -97,14 +100,26 @@ const ImageBlock: React.FC<ImageBlockProps> = ({ index, item }) => {
         </Box>
         <Divider light variant="fullWidth" />
         <Box display="flex" flexWrap="no-wrap" style={{ overflowX: "auto" }}>
-          {list.map(({ text, matrix }, i) => (
+          {list.map(({ text, matrix, imageItem }, i) => (
             <Box key={i} margin={2}>
-              <Typography display="block" noWrap>
-                {text}
-              </Typography>
               <Box maxWidth={600} maxHeight={600} overflow="auto">
                 <ImageCanvas matrix={matrix} />
               </Box>
+              <Typography display="block" noWrap>
+                {text}
+              </Typography>
+              <Typography display="block" noWrap>
+                Bit: {imageItem.bit}-bit
+              </Typography>
+              <Typography display="block" noWrap>
+                Gray Scaled: {imageItem.isGrayScaled.toString()}
+              </Typography>
+              {imageItem.type === "bit-planes-removing" && (
+                <Typography display="block" noWrap>
+                  Bit Planes:{" "}
+                  {imageItem.bits.toString(2).padStart(imageItem.bit, "0")}
+                </Typography>
+              )}
             </Box>
           ))}
         </Box>
@@ -114,69 +129,3 @@ const ImageBlock: React.FC<ImageBlockProps> = ({ index, item }) => {
 };
 
 export default ImageBlock;
-
-/*
-<Card>
-      <CardHeader title={title} subheader={subheader} />
-      <CardContent
-        component={Box}
-        overflow="auto"
-        maxWidth="100%"
-        maxHeight={720}
-      >
-        <Grid container spacing={4} wrap="nowrap" justifyContent="center">
-          {!!source && (
-            <Grid item xs={12} md={6}>
-              <Paper style={{ height: "100%" }}>
-                <Box
-                  padding={1}
-                  display="flex"
-                  flexDirection="column"
-                  height="100%"
-                >
-                  <Typography display="block">
-                    Source ({source.matrix[0].length} x {source.matrix.length})
-                  </Typography>
-                  <Box
-                    display="flex"
-                    justifyContent="center"
-                    alignItems="center"
-                    padding={1}
-                    overflow="auto"
-                    height="100%"
-                  >
-                    <ImageCanvas matrix={source.matrix} />
-                  </Box>
-                </Box>
-              </Paper>
-            </Grid>
-          )}
-          <Grid item xs={12} md={6}>
-            <Paper style={{ height: "100%" }}>
-              <Box
-                padding={1}
-                display="flex"
-                flexDirection="column"
-                height="100%"
-              >
-                <Typography display="block">
-                  {index === 0 ? "Original" : "Result"} ({item.matrix[0].length}{" "}
-                  x {item.matrix.length})
-                </Typography>
-                <Box
-                  display="flex"
-                  justifyContent="center"
-                  alignItems="center"
-                  padding={1}
-                  overflow="auto"
-                  height="100%"
-                >
-                  <ImageCanvas matrix={item.matrix} />
-                </Box>
-              </Box>
-            </Paper>
-          </Grid>
-        </Grid>
-      </CardContent>
-    </Card>
-    */

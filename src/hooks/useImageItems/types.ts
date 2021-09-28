@@ -4,6 +4,8 @@ import { Pixel } from "src/utils/imageDataUtils";
 interface DefaultItemProperties {
   matrix: Pixel[][];
   source: number | null;
+  bit: BitType;
+  isGrayScaled: boolean;
 }
 
 /** Original */
