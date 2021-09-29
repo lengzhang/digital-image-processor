@@ -58,7 +58,7 @@ const useController = () => {
         method: values["spatial-filter-type"] as SpatialFilteringMethodType,
         size: parseInt(values["spatial-filter-size"]) || 3,
         /** Smoothing Filter */
-        sigma: parseInt(values["smoothing-filter-sigma"]) || 1,
+        sigma: parseFloat(values["smoothing-filter-sigma"]) || 1,
         /** Sharpening Laplacian Filter */
         maskMode: values[
           "sharpening-laplacian-filter-mask-mode"

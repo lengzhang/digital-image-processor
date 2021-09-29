@@ -68,7 +68,7 @@ const smoothingFilter = (matrix, mask, maskSum) => {
    */
   for (let y = 0; y < col; y++) {
     for (let x = 0; x < row; x++) {
-      let sum = { R: 0, G: 0, B: 0 };
+      const sum = { R: 0, G: 0, B: 0 };
       /**
        * Loop for the mask
        * get the number of pixels of each level value

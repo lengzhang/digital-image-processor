@@ -53,15 +53,8 @@ const histogramEqualizationItems: SelectionItem[] = [
   { value: "local", text: "Local" },
 ];
 
-const histogramEqualizationLocalItems: SelectionItem[] = [
-  { value: 3, text: "3x3" },
-  { value: 5, text: "5x5" },
-  { value: 7, text: "7x7" },
-  { value: 9, text: "9x9" },
-];
-
 const spatialFilterMethodItems: SelectionItem[] = [
-  { value: "smoothing-filter", text: "Smoothing Filter" },
+  { value: "smoothing-filter", text: "Gaussian Smoothing Filter" },
   { value: "median-filter", text: "Median Filter" },
   { value: "sharpening-laplacian-filter", text: "Sharpening Laplacian Filter" },
   { value: "high-boosting-filter", text: "High Boosting Filter" },
@@ -173,6 +166,13 @@ const ControllerForm: React.FC<ControllerFormProps> = ({ disabled, items }) => {
                 size: "small",
                 type: "number",
               }}
+              validate={(value, _, meta) => {
+                if (meta?.dirty) {
+                  const num = parseFloat(value);
+                  if (num < 0 || !Number.isInteger(num))
+                    return "Width must be positive integer.";
+                }
+              }}
             />
           </Grid>
           <Grid item>
@@ -186,6 +186,13 @@ const ControllerForm: React.FC<ControllerFormProps> = ({ disabled, items }) => {
                 required: true,
                 size: "small",
                 type: "number",
+              }}
+              validate={(value, _, meta) => {
+                if (meta?.dirty) {
+                  const num = parseFloat(value);
+                  if (num < 0 || !Number.isInteger(num))
+                    return "Height must be positive integer.";
+                }
               }}
             />
           </Grid>
@@ -234,16 +241,20 @@ const ControllerForm: React.FC<ControllerFormProps> = ({ disabled, items }) => {
               <Field
                 allowNull
                 name="histogram-equalization-local-size"
-                component={SelectField}
-                items={histogramEqualizationLocalItems}
+                component={InputField}
                 textFieldProps={{
                   className: classes.textField,
-                  disabled,
                   label: "Size",
-                  variant: "outlined",
                   required: true,
                   size: "small",
-                  SelectProps: { autoWidth: true },
+                  type: "number",
+                }}
+                validate={(value, _, meta) => {
+                  if (meta?.dirty) {
+                    const num = parseFloat(value);
+                    if (num < 0 || !Number.isInteger(num))
+                      return "Filter size must be positive integer.";
+                  }
                 }}
               />
             </Grid>
@@ -282,6 +293,13 @@ const ControllerForm: React.FC<ControllerFormProps> = ({ disabled, items }) => {
                   required: true,
                   size: "small",
                   type: "number",
+                }}
+                validate={(value, _, meta) => {
+                  if (meta?.dirty) {
+                    const num = parseFloat(value);
+                    if (num < 0 || !Number.isInteger(num) || num % 2 !== 1)
+                      return "Kernel size must be positive odd integer.";
+                  }
                 }}
               />
             </Grid>
@@ -363,6 +381,12 @@ const ControllerForm: React.FC<ControllerFormProps> = ({ disabled, items }) => {
                     required: true,
                     size: "small",
                     type: "number",
+                  }}
+                  validate={(value, _, meta) => {
+                    if (meta?.dirty) {
+                      const num = parseFloat(value);
+                      if (num < 1) return "k must be greater than or equal 1.";
+                    }
                   }}
                 />
               </Grid>
