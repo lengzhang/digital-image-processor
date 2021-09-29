@@ -3,11 +3,11 @@ import { makeStyles } from "@material-ui/core/styles";
 
 import { FieldRenderProps, useForm } from "react-final-form";
 
-import Box from "@material-ui/core/Box";
 import Checkbox from "@material-ui/core/Checkbox";
 import FormGroup from "@material-ui/core/FormGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
-import Typography from "@material-ui/core/Typography";
+import FormControl from "@material-ui/core/FormControl";
+import FormLabel from "@material-ui/core/FormLabel";
 
 interface BitsCheckboxProps extends FieldRenderProps<any, HTMLElement> {}
 
@@ -38,7 +38,7 @@ const booleanArrayToBitValue = (list: boolean[]) => {
   );
 };
 
-const BitsCheckboxField: React.FC<BitsCheckboxProps> = ({ input, bit }) => {
+const BitsCheckboxField: React.FC<BitsCheckboxProps> = ({ input }) => {
   const classes = useStyles();
   const form = useForm();
   const [checkboxes, setCheckboxes] = React.useState(
@@ -59,15 +59,8 @@ const BitsCheckboxField: React.FC<BitsCheckboxProps> = ({ input, bit }) => {
     };
 
   return (
-    <Box
-      display="flex"
-      flexDirection="row"
-      alignItems="center"
-      flexWrap="nowrap"
-    >
-      <Typography display="inline" noWrap>
-        Bit Planes:
-      </Typography>
+    <FormControl component="fieldset" size="small" required>
+      <FormLabel component="legend">Bit Planes:</FormLabel>
       <FormGroup className={classes.group} row>
         {checkboxes.map((checked, i) => {
           const name = `bit-${i + 1}`;
@@ -90,7 +83,7 @@ const BitsCheckboxField: React.FC<BitsCheckboxProps> = ({ input, bit }) => {
           );
         })}
       </FormGroup>
-    </Box>
+    </FormControl>
   );
 };
 

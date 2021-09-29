@@ -35,12 +35,14 @@ export const medianFilter = async (matrix: Pixel[][], size: number) => {
 
 export const sharpeningLaplacianFilter = async (
   matrix: Pixel[][],
-  maskMode: SharpeningLaplacianMaskMode
+  maskMode: SharpeningLaplacianMaskMode,
+  processMode: "none" | "scaled" | "sharpened"
 ) => {
   const result = await runImageProcessWorker(
     SHARPENING_LAPLACIAN_FILTER_WORKER,
     matrix,
-    maskMode
+    maskMode,
+    processMode
   );
   return result;
 };

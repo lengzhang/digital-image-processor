@@ -61,6 +61,8 @@ const useController = () => {
         maskMode: values[
           "sharpening-laplacian-filter-mask-mode"
         ] as SharpeningLaplacianMaskMode,
+        processMode:
+          values["sharpening-laplacian-filter-process-mode"] || "none",
       });
     }
     scrollToBottom();

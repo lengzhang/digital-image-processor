@@ -71,6 +71,7 @@ export type SpatialFilteringItem = DefaultItemProperties & {
     | {
         method: "sharpening-laplacian-filter";
         maskMode: SharpeningLaplacianMaskMode;
+        processMode: "none" | "scaled" | "sharpened";
       }
     | {
         method: "high-boosting-filter";
@@ -144,6 +145,7 @@ export interface SpatialFilteringParams {
   highBoostingA?: number; // Property for high-boosting filter
   sigma?: number; // For smoothing filter
   maskMode?: SharpeningLaplacianMaskMode;
+  processMode?: string;
 }
 
 export interface ImageItemsContext {

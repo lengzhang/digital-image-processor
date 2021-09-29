@@ -328,6 +328,7 @@ const ImageItemsProvider: React.FC = ({ children }) => {
       highBoostingA,
       sigma,
       maskMode,
+      processMode = "none",
     }: SpatialFilteringParams) => {
       try {
         dispatch({ type: "set-status", status: "spatial-filtering" });
@@ -379,10 +380,18 @@ const ImageItemsProvider: React.FC = ({ children }) => {
           ) {
             throw new Error("Mask mode is invalid");
           }
+          if (
+            processMode !== "none" &&
+            processMode !== "scaled" &&
+            processMode !== "sharpened"
+          ) {
+            throw new Error("Process mode is invalid");
+          }
           const matrix =
             await spatialFilterOperations.sharpeningLaplacianFilter(
               sourceItem.matrix,
-              maskMode
+              maskMode,
+              processMode
             );
           item = {
             type: "spatial-filtering",
@@ -392,6 +401,7 @@ const ImageItemsProvider: React.FC = ({ children }) => {
             bit: sourceItem.bit,
             isGrayScaled: sourceItem.isGrayScaled,
             maskMode,
+            processMode,
           };
         } else if (method === "high-boosting-filter") {
           if (typeof highBoostingA !== "number")

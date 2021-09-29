@@ -113,9 +113,14 @@ const ImageBlock: React.FC<ImageBlockProps> = ({ index, item }) => {
                     </Typography>
                   )}
                   {imageItem.method === "sharpening-laplacian-filter" && (
-                    <Typography display="block" noWrap>
-                      Mask Mode: {imageItem.maskMode}
-                    </Typography>
+                    <>
+                      <Typography display="block" noWrap>
+                        Mask Mode: {imageItem.maskMode}
+                      </Typography>
+                      <Typography display="block" noWrap>
+                        Process Mode: {imageItem.processMode}
+                      </Typography>
+                    </>
                   )}
                   {imageItem.method === "high-boosting-filter" && (
                     <Typography display="block" noWrap>
