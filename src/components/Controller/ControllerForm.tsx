@@ -101,6 +101,15 @@ const ControllerForm: React.FC<ControllerFormProps> = ({ disabled, items }) => {
     [items, values.source]
   );
 
+  const sourceItems = React.useMemo(
+    () =>
+      items.map<SelectionItem>((_, i) => ({
+        value: `${i}`,
+        text: `${i === 0 ? "Original" : i}`,
+      })),
+    [items]
+  );
+
   React.useEffect(
     () => {
       formApi.reset({
@@ -261,8 +270,7 @@ const ControllerForm: React.FC<ControllerFormProps> = ({ disabled, items }) => {
             />
           </Grid>
           {(values["spatial-filter-type"] === "smoothing-filter" ||
-            values["spatial-filter-type"] === "median-filter" ||
-            values["spatial-filter-type"] === "high-boosting-filter") && (
+            values["spatial-filter-type"] === "median-filter") && (
             <Grid item>
               <Field
                 allowNull
@@ -321,6 +329,41 @@ const ControllerForm: React.FC<ControllerFormProps> = ({ disabled, items }) => {
                   label="Process Mode:"
                   name="sharpening-laplacian-filter-process-mode"
                   required
+                />
+              </Grid>
+            </>
+          )}
+          {values["spatial-filter-type"] === "high-boosting-filter" && (
+            <>
+              <Grid item>
+                <Field
+                  allowNull
+                  name="high-boosting-filter-blurred-image"
+                  component={SelectField}
+                  items={sourceItems}
+                  textFieldProps={{
+                    className: classes.textField,
+                    disabled,
+                    label: "Blurred Image",
+                    variant: "outlined",
+                    required: true,
+                    size: "small",
+                    SelectProps: { autoWidth: true },
+                  }}
+                />
+              </Grid>
+              <Grid item>
+                <Field
+                  allowNull
+                  name="high-boosting-filter-k"
+                  component={InputField}
+                  textFieldProps={{
+                    className: classes.textField,
+                    label: "k (k >= 1)",
+                    required: true,
+                    size: "small",
+                    type: "number",
+                  }}
                 />
               </Grid>
             </>

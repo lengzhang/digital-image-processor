@@ -325,10 +325,14 @@ const ImageItemsProvider: React.FC = ({ children }) => {
       source,
       method,
       size,
-      highBoostingA,
+      /** Smoothing Filter */
       sigma,
+      /** Sharpening Laplacian Filter */
       maskMode,
       processMode = "none",
+      /** High-boosting Filter */
+      blurredImage = 0,
+      highBoostingK,
     }: SpatialFilteringParams) => {
       try {
         dispatch({ type: "set-status", status: "spatial-filtering" });
@@ -404,12 +408,19 @@ const ImageItemsProvider: React.FC = ({ children }) => {
             processMode,
           };
         } else if (method === "high-boosting-filter") {
-          if (typeof highBoostingA !== "number")
+          if (typeof highBoostingK !== "number")
             throw new Error("High-boosting A is invalid");
+
+          if (blurredImage < 0 || blurredImage >= items.length) {
+            throw new Error("Blurred image index is out of range");
+          }
+
+          const blurredItem = items[blurredImage];
+
           const matrix = await spatialFilterOperations.highBoostingFilter(
             sourceItem.matrix,
-            size,
-            highBoostingA
+            blurredItem.matrix,
+            highBoostingK
           );
           item = {
             type: "spatial-filtering",
@@ -418,8 +429,8 @@ const ImageItemsProvider: React.FC = ({ children }) => {
             source,
             bit: sourceItem.bit,
             isGrayScaled: sourceItem.isGrayScaled,
-            filterSize: size,
-            highBoostingA,
+            blurredImage,
+            highBoostingK,
           };
         }
 

@@ -100,8 +100,7 @@ const ImageBlock: React.FC<ImageBlockProps> = ({ index, item }) => {
                     Filter Mode: {imageItem.method}
                   </Typography>
                   {(imageItem.method === "smoothing-filter" ||
-                    imageItem.method === "median-filter" ||
-                    imageItem.method === "high-boosting-filter") && (
+                    imageItem.method === "median-filter") && (
                     <Typography display="block" noWrap>
                       Filter Kernel Size: {imageItem.filterSize}x
                       {imageItem.filterSize}
@@ -123,9 +122,14 @@ const ImageBlock: React.FC<ImageBlockProps> = ({ index, item }) => {
                     </>
                   )}
                   {imageItem.method === "high-boosting-filter" && (
-                    <Typography display="block" noWrap>
-                      A: {imageItem.highBoostingA}
-                    </Typography>
+                    <>
+                      <Typography display="block" noWrap>
+                        Blurred Image: {imageItem.blurredImage}
+                      </Typography>
+                      <Typography display="block" noWrap>
+                        k: {imageItem.highBoostingK}
+                      </Typography>
+                    </>
                   )}
                 </>
               )}

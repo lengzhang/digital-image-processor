@@ -49,14 +49,14 @@ export const sharpeningLaplacianFilter = async (
 
 export const highBoostingFilter = async (
   matrix: Pixel[][],
-  size: number,
-  A: number
+  blurredMatrix: Pixel[][],
+  k: number
 ) => {
   const result = await runImageProcessWorker(
     HIGH_BOOSTING_FILTER_WORKER,
     matrix,
-    size,
-    A
+    blurredMatrix,
+    k
   );
   return result;
 };

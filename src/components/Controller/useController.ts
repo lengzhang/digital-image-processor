@@ -57,12 +57,17 @@ const useController = () => {
         source: parseInt(values.source),
         method: values["spatial-filter-type"] as SpatialFilteringMethodType,
         size: parseInt(values["spatial-filter-size"]) || 3,
+        /** Smoothing Filter */
         sigma: parseInt(values["smoothing-filter-sigma"]) || 1,
+        /** Sharpening Laplacian Filter */
         maskMode: values[
           "sharpening-laplacian-filter-mask-mode"
         ] as SharpeningLaplacianMaskMode,
         processMode:
           values["sharpening-laplacian-filter-process-mode"] || "none",
+        /** High-boosting Filter */
+        blurredImage: parseInt(values["high-boosting-filter-blurred-image"]),
+        highBoostingK: parseInt(values["high-boosting-filter-k"]) || 1,
       });
     }
     scrollToBottom();

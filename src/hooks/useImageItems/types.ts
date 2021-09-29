@@ -75,8 +75,8 @@ export type SpatialFilteringItem = DefaultItemProperties & {
       }
     | {
         method: "high-boosting-filter";
-        filterSize: number; // (filterSize x filterSize)
-        highBoostingA: number; // Property for high-boosting filter
+        blurredImage: number; // index of the blurred image
+        highBoostingK: number; // Property for high-boosting filter
       }
   );
 
@@ -142,10 +142,14 @@ export interface SpatialFilteringParams {
   source: number;
   method: SpatialFilteringMethodType;
   size: number; // Kernel size
-  highBoostingA?: number; // Property for high-boosting filter
+  /** Smoothing Filter */
   sigma?: number; // For smoothing filter
+  /** Sharpening Laplacian Filter */
   maskMode?: SharpeningLaplacianMaskMode;
   processMode?: string;
+  /** High-boosting Filter */
+  blurredImage?: number;
+  highBoostingK?: number; // Property for high-boosting filter
 }
 
 export interface ImageItemsContext {
