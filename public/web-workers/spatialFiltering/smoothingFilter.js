@@ -25,13 +25,13 @@ const generateGaussianTemplate = (size, sigma) => {
 
   const offset = Math.floor(size / 2);
 
-  for (let i = 0; i < size; i++) {
-    const x2 = Math.pow(i - offset, 2); // x^2
-    for (let j = 0; j < size; j++) {
-      const y2 = Math.pow(j - offset, 2); // y^2
+  for (let j = 0; j < size; j++) {
+    const x2 = Math.pow(j - offset, 2); // x^2
+    for (let i = 0; i < size; i++) {
+      const y2 = Math.pow(i - offset, 2); // y^2
       let h = Math.exp(-(x2 + y2) / (2 * sigma * sigma)); // e^(-(x^2 + y^2) / (2σ^2)
       h /= 2 * Math.PI * sigma; // (1 / (2πσ^2)) * e^(-(x^2 + y^2) / (2σ^2))
-      template[i][j] = h;
+      template[j][i] = h;
     }
   }
 
@@ -39,10 +39,10 @@ const generateGaussianTemplate = (size, sigma) => {
   const k = template[0][0];
   let sum = 0;
 
-  for (let i = 0; i < size; i++) {
-    for (let j = 0; j < size; j++) {
-      template[i][j] = Math.floor(template[i][j] / k);
-      sum += template[i][j];
+  for (let j = 0; j < size; j++) {
+    for (let i = 0; i < size; i++) {
+      template[j][i] = Math.floor(template[j][i] / k);
+      sum += template[j][i];
     }
   }
 

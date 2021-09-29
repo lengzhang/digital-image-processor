@@ -51,13 +51,22 @@ export type SpatialFilteringMethodType =
   | "median-filter"
   | "sharpening-laplacian-filter"
   | "high-boosting-filter";
-export interface SpatialFilteringItem extends DefaultItemProperties {
+export type SpatialFilteringItem = DefaultItemProperties & {
   type: "spatial-filtering";
-  method: SpatialFilteringMethodType;
   filterSize: number; // (filterSize x filterSize)
-  highBoostingA?: number; // Property for high-boosting filter
-  sigma?: number; // For smoothing filter
-}
+} & (
+    | {
+        method: "smoothing-filter";
+        sigma: number; // For smoothing filter
+      }
+    | {
+        method: "median-filter" | "sharpening-laplacian-filter";
+      }
+    | {
+        method: "high-boosting-filter";
+        highBoostingA: number; // Property for high-boosting filter
+      }
+  );
 
 type ImageItemsStatus =
   | "idle"

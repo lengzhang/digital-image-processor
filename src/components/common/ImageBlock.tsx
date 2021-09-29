@@ -97,6 +97,9 @@ const ImageBlock: React.FC<ImageBlockProps> = ({ index, item }) => {
               {imageItem.type === "spatial-filtering" && (
                 <>
                   <Typography display="block" noWrap>
+                    Filter Mode: {imageItem.method}
+                  </Typography>
+                  <Typography display="block" noWrap>
                     Filter Kernel Size: {imageItem.filterSize}x
                     {imageItem.filterSize}
                   </Typography>
@@ -104,6 +107,13 @@ const ImageBlock: React.FC<ImageBlockProps> = ({ index, item }) => {
                     <>
                       <Typography display="block" noWrap>
                         σ (Sigma): {imageItem.sigma}
+                      </Typography>
+                    </>
+                  )}
+                  {imageItem.method === "high-boosting-filter" && (
+                    <>
+                      <Typography display="block" noWrap>
+                        A: {imageItem.highBoostingA}
                       </Typography>
                     </>
                   )}
