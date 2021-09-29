@@ -280,6 +280,7 @@ const ImageItemsProvider: React.FC = ({ children }) => {
     [state.items]
   );
 
+  /** Histogram Equalization */
   const histogramEqualization = useCallback(
     async ({ source, size }: HistogramEqualizationParams) => {
       try {
@@ -301,6 +302,7 @@ const ImageItemsProvider: React.FC = ({ children }) => {
             source,
             bit: sourceItem.bit,
             isGrayScaled: sourceItem.isGrayScaled,
+            heMode: size === undefined ? "Global" : `Local ${size} x ${size}`,
           },
         });
       } catch (error: any) {

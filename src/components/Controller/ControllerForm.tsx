@@ -62,6 +62,9 @@ const histogramEqualizationItems: SelectionItem[] = [
 
 const histogramEqualizationLocalItems: SelectionItem[] = [
   { value: 3, text: "3x3" },
+  { value: 5, text: "5x5" },
+  { value: 7, text: "7x7" },
+  { value: 9, text: "9x9" },
 ];
 
 const bitItems = [1, 2, 3, 4, 5, 6, 7, 8].map((v) => ({

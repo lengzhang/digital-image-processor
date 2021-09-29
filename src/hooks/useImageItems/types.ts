@@ -42,6 +42,7 @@ export interface BitPlanesRemovingItem extends DefaultItemProperties {
 /** Histogram Equalization */
 export interface HistogramEqualizationItem extends DefaultItemProperties {
   type: "histogram-equalization";
+  heMode: string;
 }
 
 type ImageItemsStatus =

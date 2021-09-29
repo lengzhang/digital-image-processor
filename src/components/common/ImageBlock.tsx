@@ -88,6 +88,12 @@ const ImageBlock: React.FC<ImageBlockProps> = ({ index, item }) => {
                   {imageItem.bits.toString(2).padStart(imageItem.bit, "0")}
                 </Typography>
               )}
+              {imageItem.type === "histogram-equalization" &&
+                !!imageItem.heMode && (
+                  <Typography display="block" noWrap>
+                    HE Mode: {imageItem.heMode}
+                  </Typography>
+                )}
             </Box>
           ))}
         </Box>
