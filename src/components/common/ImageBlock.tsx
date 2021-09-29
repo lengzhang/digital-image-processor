@@ -94,6 +94,21 @@ const ImageBlock: React.FC<ImageBlockProps> = ({ index, item }) => {
                     HE Mode: {imageItem.heMode}
                   </Typography>
                 )}
+              {imageItem.type === "spatial-filtering" && (
+                <>
+                  <Typography display="block" noWrap>
+                    Filter Kernel Size: {imageItem.filterSize}x
+                    {imageItem.filterSize}
+                  </Typography>
+                  {imageItem.method === "smoothing-filter" && (
+                    <>
+                      <Typography display="block" noWrap>
+                        σ (Sigma): {imageItem.sigma}
+                      </Typography>
+                    </>
+                  )}
+                </>
+              )}
             </Box>
           ))}
         </Box>

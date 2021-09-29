@@ -14,7 +14,7 @@ export interface OriginalItem extends DefaultItemProperties {
 }
 
 /** Spatial Resolution */
-export type MethodType =
+export type SpatialResolutionMethodType =
   | "nearest-neighbor-interpolation"
   | "linear-interpolation-x"
   | "linear-interpolation-y"
@@ -22,7 +22,7 @@ export type MethodType =
 
 export interface SpatialResolutionItem extends DefaultItemProperties {
   type: "spatial-resolution";
-  method: MethodType;
+  method: SpatialResolutionMethodType;
   width: number;
   height: number;
 }
@@ -45,6 +45,20 @@ export interface HistogramEqualizationItem extends DefaultItemProperties {
   heMode: string;
 }
 
+/** Spatial Filtering */
+export type SpatialFilteringMethodType =
+  | "smoothing-filter"
+  | "median-filter"
+  | "sharpening-laplacian-filter"
+  | "high-boosting-filter";
+export interface SpatialFilteringItem extends DefaultItemProperties {
+  type: "spatial-filtering";
+  method: SpatialFilteringMethodType;
+  filterSize: number; // (filterSize x filterSize)
+  highBoostingA?: number; // Property for high-boosting filter
+  sigma?: number; // For smoothing filter
+}
+
 type ImageItemsStatus =
   | "idle"
   | "seting-original-file"
@@ -54,14 +68,16 @@ type ImageItemsStatus =
   | "bilinear-interpolation"
   | "gray-level-resolution"
   | "bit-planes-removing"
-  | "histogram-equalization";
+  | "histogram-equalization"
+  | "spatial-filtering";
 
 export type ImageItem =
   | OriginalItem
   | SpatialResolutionItem
   | GrayLevelResolutionItem
   | BitPlanesRemovingItem
-  | HistogramEqualizationItem;
+  | HistogramEqualizationItem
+  | SpatialFilteringItem;
 
 export interface ImageItemsState {
   status: ImageItemsStatus;
@@ -97,7 +113,16 @@ export interface BitPlanesRemovingParams {
 /** Histogram Equalization */
 export interface HistogramEqualizationParams {
   source: number;
-  size?: number; // Mash size for local
+  size?: number; // Mask size for local
+}
+
+/** Spatial Filtering */
+export interface SpatialFilteringParams {
+  source: number;
+  method: SpatialFilteringMethodType;
+  size: number; // Kernel size
+  highBoostingA?: number; // Property for high-boosting filter
+  sigma?: number; // For smoothing filter
 }
 
 export interface ImageItemsContext {
@@ -115,4 +140,5 @@ export interface ImageItemsContext {
   grayLevelResolution: (params: GrayLevelResolutionParams) => Promise<void>;
   bitPlanesRemoving: (params: BitPlanesRemovingParams) => Promise<void>;
   histogramEqualization: (params: HistogramEqualizationParams) => Promise<void>;
+  spatialFiltering: (params: SpatialFilteringParams) => Promise<void>;
 }

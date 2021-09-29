@@ -2,7 +2,9 @@ import { FormApi } from "final-form";
 import { BitType } from "src/utils/grayLevelResolution";
 import { scrollToBottom } from "src/utils";
 
-import useImageItems from "src/hooks/useImageItems";
+import useImageItems, {
+  SpatialFilteringMethodType,
+} from "src/hooks/useImageItems";
 
 const useController = () => {
   const {
@@ -13,6 +15,7 @@ const useController = () => {
     grayLevelResolution,
     bitPlanesRemoving,
     histogramEqualization,
+    spatialFiltering,
   } = useImageItems();
 
   const onSubmit = async (values: Record<string, string>, formApi: FormApi) => {
@@ -47,6 +50,13 @@ const useController = () => {
           values["histogram-equalization-type"] === "local"
             ? parseInt(values["histogram-equalization-local-size"]) || undefined
             : undefined,
+      });
+    } else if (values.type === "spatial-filter") {
+      await spatialFiltering({
+        source: parseInt(values.source),
+        method: values["spatial-filter-type"] as SpatialFilteringMethodType,
+        size: parseInt(values["spatial-filter-size"]) || 3,
+        sigma: parseInt(values["smoothing-filter-sigma"]) || 1,
       });
     }
     scrollToBottom();

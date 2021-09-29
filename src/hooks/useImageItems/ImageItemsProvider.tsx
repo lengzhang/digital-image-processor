@@ -7,6 +7,7 @@ import * as spatialResolution from "src/utils/spatialResolution";
 import { grayLevelResolution as glResolution } from "src/utils/grayLevelResolution";
 import { bitPlanesRemoving as bpRemoving } from "src/utils/bitPlanesRemoving";
 import { histogramEqualization as hEqualization } from "src/utils/histogramEqualization";
+import * as spatialFilterOperations from "src/utils/spatialFilteringOperations";
 
 import { imageItemsContext } from "./context";
 import {
@@ -17,6 +18,7 @@ import {
   GrayLevelResolutionParams,
   BitPlanesRemovingParams,
   HistogramEqualizationParams,
+  SpatialFilteringParams,
 } from "./types";
 
 const initialState: ImageItemsState = {
@@ -316,6 +318,73 @@ const ImageItemsProvider: React.FC = ({ children }) => {
     [state.items]
   );
 
+  /** Spatial Filtering */
+  const spatialFiltering = useCallback(
+    async ({
+      source,
+      method,
+      size = 3,
+      highBoostingA = 1,
+      sigma = 1,
+    }: SpatialFilteringParams) => {
+      try {
+        dispatch({ type: "set-status", status: "spatial-filtering" });
+        const items = state.items;
+        if (source < 0 || source >= items.length) {
+          throw new Error("source index is out of range");
+        }
+
+        const sourceItem = items[source];
+
+        const matrix =
+          method === "median-filter"
+            ? await spatialFilterOperations.medianFilter(
+                sourceItem.matrix,
+                size
+              )
+            : method === "sharpening-laplacian-filter"
+            ? await spatialFilterOperations.sharpeningLaplacianFilter(
+                sourceItem.matrix,
+                size
+              )
+            : method === "high-boosting-filter"
+            ? await spatialFilterOperations.highBoostingFilter(
+                sourceItem.matrix,
+                size,
+                highBoostingA
+              )
+            : // Smoothing filter
+              await spatialFilterOperations.smoothingFilter(
+                sourceItem.matrix,
+                size,
+                sigma
+              );
+
+        dispatch({
+          type: "push-item",
+          item: {
+            type: "spatial-filtering",
+            method,
+            matrix,
+            source,
+            bit: sourceItem.bit,
+            isGrayScaled: sourceItem.isGrayScaled,
+            filterSize: size,
+            highBoostingA,
+            sigma,
+          },
+        });
+      } catch (error: any) {
+        dispatch({
+          type: "set-error",
+          error: error?.message ?? "Calculating histogram equalization faile",
+        });
+      }
+      dispatch({ type: "set-status", status: "idle" });
+    },
+    [state.items]
+  );
+
   return (
     <imageItemsContext.Provider
       value={{
@@ -329,6 +398,7 @@ const ImageItemsProvider: React.FC = ({ children }) => {
         grayLevelResolution,
         bitPlanesRemoving,
         histogramEqualization,
+        spatialFiltering,
       }}
     >
       {children}

@@ -25,18 +25,10 @@ interface SelectionItem {
 const resolutionItems: SelectionItem[] = [
   { value: "", text: "None" },
   { value: "spatial-resolution", text: "Spatial Resolution" },
-  {
-    value: "gray-level-resolution",
-    text: "Gray Level Resolution",
-  },
-  {
-    value: "histogram-equalization",
-    text: "Histogram Equalization",
-  },
-  {
-    value: "bit-planes-removing",
-    text: "Bit Planes Removing",
-  },
+  { value: "gray-level-resolution", text: "Gray Level Resolution" },
+  { value: "histogram-equalization", text: "Histogram Equalization" },
+  { value: "spatial-filter", text: "Spatial Filter" },
+  { value: "bit-planes-removing", text: "Bit Planes Removing" },
 ];
 
 const methodItems: SelectionItem[] = [
@@ -65,6 +57,13 @@ const histogramEqualizationLocalItems: SelectionItem[] = [
   { value: 5, text: "5x5" },
   { value: 7, text: "7x7" },
   { value: 9, text: "9x9" },
+];
+
+const spatialFilterMethodItems: SelectionItem[] = [
+  { value: "smoothing-filter", text: "Smoothing Filter" },
+  { value: "median-filter", text: "Median Filter" },
+  { value: "sharpening-laplacian-filter", text: "Sharpening Laplacian Filter" },
+  { value: "high-boosting-filter", text: "High Boosting Filter" },
 ];
 
 const bitItems = [1, 2, 3, 4, 5, 6, 7, 8].map((v) => ({
@@ -222,6 +221,57 @@ const ControllerForm: React.FC<ControllerFormProps> = ({ disabled, items }) => {
                   required: true,
                   size: "small",
                   SelectProps: { autoWidth: true },
+                }}
+              />
+            </Grid>
+          )}
+        </>
+      )}
+      {values.type === "spatial-filter" && (
+        <>
+          <Grid item>
+            <Field
+              allowNull
+              name="spatial-filter-type"
+              component={SelectField}
+              items={spatialFilterMethodItems}
+              textFieldProps={{
+                className: classes.textField,
+                disabled,
+                label: "Type",
+                variant: "outlined",
+                required: true,
+                size: "small",
+                SelectProps: { autoWidth: true },
+              }}
+            />
+          </Grid>
+          <Grid item>
+            <Field
+              allowNull
+              name="spatial-filter-size"
+              component={InputField}
+              textFieldProps={{
+                className: classes.textField,
+                label: "Kernel Size",
+                required: true,
+                size: "small",
+                type: "number",
+              }}
+            />
+          </Grid>
+          {values["spatial-filter-type"] === "smoothing-filter" && (
+            <Grid item>
+              <Field
+                allowNull
+                name="smoothing-filter-sigma"
+                component={InputField}
+                textFieldProps={{
+                  className: classes.textField,
+                  label: "σ (sigma)",
+                  required: true,
+                  size: "small",
+                  type: "number",
                 }}
               />
             </Grid>
