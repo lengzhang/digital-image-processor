@@ -24,14 +24,15 @@ const generateGaussianTemplate = (size, sigma) => {
   );
 
   const offset = Math.floor(size / 2);
+  const sigma2 = sigma * sigma;
 
   for (let j = 0; j < size; j++) {
     const x2 = Math.pow(j - offset, 2); // x^2
     for (let i = 0; i < size; i++) {
       const y2 = Math.pow(i - offset, 2); // y^2
-      let h = Math.exp(-(x2 + y2) / (2 * sigma * sigma)); // e^(-(x^2 + y^2) / (2σ^2)
-      h /= 2 * Math.PI * sigma; // (1 / (2πσ^2)) * e^(-(x^2 + y^2) / (2σ^2))
-      template[j][i] = h;
+      const a = 2 * Math.PI * sigma2; // 2πσ^2
+      const b = Math.exp(-(x2 + y2) / (2 * sigma2)); // e^(-(x^2 + y^2) / (2σ^2)
+      template[j][i] = b / a;
     }
   }
 
