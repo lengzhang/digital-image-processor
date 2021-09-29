@@ -3,6 +3,7 @@ import { BitType } from "src/utils/grayLevelResolution";
 import { scrollToBottom } from "src/utils";
 
 import useImageItems, {
+  SharpeningLaplacianMaskMode,
   SpatialFilteringMethodType,
 } from "src/hooks/useImageItems";
 
@@ -57,6 +58,9 @@ const useController = () => {
         method: values["spatial-filter-type"] as SpatialFilteringMethodType,
         size: parseInt(values["spatial-filter-size"]) || 3,
         sigma: parseInt(values["smoothing-filter-sigma"]) || 1,
+        maskMode: values[
+          "sharpening-laplacian-filter-mask-mode"
+        ] as SharpeningLaplacianMaskMode,
       });
     }
     scrollToBottom();

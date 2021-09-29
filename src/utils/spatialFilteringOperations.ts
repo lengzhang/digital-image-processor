@@ -1,3 +1,4 @@
+import { SharpeningLaplacianMaskMode } from "src/hooks/useImageItems";
 import { Pixel } from "./imageDataUtils";
 import runImageProcessWorker from "./runImageProcessWorker";
 
@@ -34,12 +35,12 @@ export const medianFilter = async (matrix: Pixel[][], size: number) => {
 
 export const sharpeningLaplacianFilter = async (
   matrix: Pixel[][],
-  size: number
+  maskMode: SharpeningLaplacianMaskMode
 ) => {
   const result = await runImageProcessWorker(
     SHARPENING_LAPLACIAN_FILTER_WORKER,
     matrix,
-    size
+    maskMode
   );
   return result;
 };

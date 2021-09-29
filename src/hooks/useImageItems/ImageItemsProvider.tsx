@@ -11,14 +11,15 @@ import * as spatialFilterOperations from "src/utils/spatialFilteringOperations";
 
 import { imageItemsContext } from "./context";
 import {
-  SpatialResolutionParams,
+  ImageItem,
   ImageItemsState,
   ImageItemsAction,
   OriginalItem,
+  SpatialResolutionParams,
   GrayLevelResolutionParams,
-  BitPlanesRemovingParams,
   HistogramEqualizationParams,
   SpatialFilteringParams,
+  BitPlanesRemovingParams,
 } from "./types";
 
 const initialState: ImageItemsState = {
@@ -323,9 +324,10 @@ const ImageItemsProvider: React.FC = ({ children }) => {
     async ({
       source,
       method,
-      size = 3,
-      highBoostingA = 1,
-      sigma = 1,
+      size,
+      highBoostingA,
+      sigma,
+      maskMode,
     }: SpatialFilteringParams) => {
       try {
         dispatch({ type: "set-status", status: "spatial-filtering" });
@@ -336,44 +338,85 @@ const ImageItemsProvider: React.FC = ({ children }) => {
 
         const sourceItem = items[source];
 
-        const matrix =
-          method === "median-filter"
-            ? await spatialFilterOperations.medianFilter(
-                sourceItem.matrix,
-                size
-              )
-            : method === "sharpening-laplacian-filter"
-            ? await spatialFilterOperations.sharpeningLaplacianFilter(
-                sourceItem.matrix,
-                size
-              )
-            : method === "high-boosting-filter"
-            ? await spatialFilterOperations.highBoostingFilter(
-                sourceItem.matrix,
-                size,
-                highBoostingA
-              )
-            : // Smoothing filter
-              await spatialFilterOperations.smoothingFilter(
-                sourceItem.matrix,
-                size,
-                sigma
-              );
-
-        dispatch({
-          type: "push-item",
-          item: {
+        let item: ImageItem | null = null;
+        if (method === "smoothing-filter") {
+          if (typeof sigma !== "number") throw new Error("Sigma is invalid");
+          const matrix = await spatialFilterOperations.smoothingFilter(
+            sourceItem.matrix,
+            size,
+            sigma
+          );
+          item = {
             type: "spatial-filtering",
-            method,
+            method: "smoothing-filter",
+            matrix,
+            source,
+            bit: sourceItem.bit,
+            isGrayScaled: sourceItem.isGrayScaled,
+            filterSize: size,
+            sigma,
+          };
+        } else if (method === "median-filter") {
+          const matrix = await spatialFilterOperations.medianFilter(
+            sourceItem.matrix,
+            size
+          );
+          item = {
+            type: "spatial-filtering",
+            method: "median-filter",
+            matrix,
+            source,
+            bit: sourceItem.bit,
+            isGrayScaled: sourceItem.isGrayScaled,
+            filterSize: size,
+          };
+        } else if (method === "sharpening-laplacian-filter") {
+          if (
+            maskMode !== "mask-4" &&
+            maskMode !== "mask-8" &&
+            maskMode !== "mask-4-reverse" &&
+            maskMode !== "mask-8-reverse"
+          ) {
+            throw new Error("Mask mode is invalid");
+          }
+          const matrix =
+            await spatialFilterOperations.sharpeningLaplacianFilter(
+              sourceItem.matrix,
+              maskMode
+            );
+          item = {
+            type: "spatial-filtering",
+            method: "sharpening-laplacian-filter",
+            matrix,
+            source,
+            bit: sourceItem.bit,
+            isGrayScaled: sourceItem.isGrayScaled,
+            maskMode,
+          };
+        } else if (method === "high-boosting-filter") {
+          if (typeof highBoostingA !== "number")
+            throw new Error("High-boosting A is invalid");
+          const matrix = await spatialFilterOperations.highBoostingFilter(
+            sourceItem.matrix,
+            size,
+            highBoostingA
+          );
+          item = {
+            type: "spatial-filtering",
+            method: "high-boosting-filter",
             matrix,
             source,
             bit: sourceItem.bit,
             isGrayScaled: sourceItem.isGrayScaled,
             filterSize: size,
             highBoostingA,
-            sigma,
-          },
-        });
+          };
+        }
+
+        if (item === null)
+          throw new Error("Spatial filtering method is invalid.");
+
+        dispatch({ type: "push-item", item });
       } catch (error: any) {
         dispatch({
           type: "set-error",

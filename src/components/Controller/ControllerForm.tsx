@@ -66,6 +66,13 @@ const spatialFilterMethodItems: SelectionItem[] = [
   { value: "high-boosting-filter", text: "High Boosting Filter" },
 ];
 
+const sharpeningLaplacianFilterMaskModeItems: SelectionItem[] = [
+  { value: "mask-4", text: "Mask 4" },
+  { value: "mask-8", text: "Mask 8" },
+  { value: "mask-4-reverse", text: "Mask 4 Reverse" },
+  { value: "mask-8-reverse", text: "Mask 8 Reverse" },
+];
+
 const bitItems = [1, 2, 3, 4, 5, 6, 7, 8].map((v) => ({
   value: `${v}`,
   text: `${v}`,
@@ -246,20 +253,24 @@ const ControllerForm: React.FC<ControllerFormProps> = ({ disabled, items }) => {
               }}
             />
           </Grid>
-          <Grid item>
-            <Field
-              allowNull
-              name="spatial-filter-size"
-              component={InputField}
-              textFieldProps={{
-                className: classes.textField,
-                label: "Kernel Size",
-                required: true,
-                size: "small",
-                type: "number",
-              }}
-            />
-          </Grid>
+          {(values["spatial-filter-type"] === "smoothing-filter" ||
+            values["spatial-filter-type"] === "median-filter" ||
+            values["spatial-filter-type"] === "high-boosting-filter") && (
+            <Grid item>
+              <Field
+                allowNull
+                name="spatial-filter-size"
+                component={InputField}
+                textFieldProps={{
+                  className: classes.textField,
+                  label: "Kernel Size",
+                  required: true,
+                  size: "small",
+                  type: "number",
+                }}
+              />
+            </Grid>
+          )}
           {values["spatial-filter-type"] === "smoothing-filter" && (
             <Grid item>
               <Field
@@ -272,6 +283,25 @@ const ControllerForm: React.FC<ControllerFormProps> = ({ disabled, items }) => {
                   required: true,
                   size: "small",
                   type: "number",
+                }}
+              />
+            </Grid>
+          )}
+          {values["spatial-filter-type"] === "sharpening-laplacian-filter" && (
+            <Grid item>
+              <Field
+                allowNull
+                name="sharpening-laplacian-filter-mask-mode"
+                component={SelectField}
+                items={sharpeningLaplacianFilterMaskModeItems}
+                textFieldProps={{
+                  className: classes.textField,
+                  disabled,
+                  label: "Type",
+                  variant: "outlined",
+                  required: true,
+                  size: "small",
+                  SelectProps: { autoWidth: true },
                 }}
               />
             </Grid>

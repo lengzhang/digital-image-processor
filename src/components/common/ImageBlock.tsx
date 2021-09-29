@@ -99,23 +99,28 @@ const ImageBlock: React.FC<ImageBlockProps> = ({ index, item }) => {
                   <Typography display="block" noWrap>
                     Filter Mode: {imageItem.method}
                   </Typography>
-                  <Typography display="block" noWrap>
-                    Filter Kernel Size: {imageItem.filterSize}x
-                    {imageItem.filterSize}
-                  </Typography>
+                  {(imageItem.method === "smoothing-filter" ||
+                    imageItem.method === "median-filter" ||
+                    imageItem.method === "high-boosting-filter") && (
+                    <Typography display="block" noWrap>
+                      Filter Kernel Size: {imageItem.filterSize}x
+                      {imageItem.filterSize}
+                    </Typography>
+                  )}
                   {imageItem.method === "smoothing-filter" && (
-                    <>
-                      <Typography display="block" noWrap>
-                        σ (Sigma): {imageItem.sigma}
-                      </Typography>
-                    </>
+                    <Typography display="block" noWrap>
+                      σ (Sigma): {imageItem.sigma}
+                    </Typography>
+                  )}
+                  {imageItem.method === "sharpening-laplacian-filter" && (
+                    <Typography display="block" noWrap>
+                      Mask Mode: {imageItem.maskMode}
+                    </Typography>
                   )}
                   {imageItem.method === "high-boosting-filter" && (
-                    <>
-                      <Typography display="block" noWrap>
-                        A: {imageItem.highBoostingA}
-                      </Typography>
-                    </>
+                    <Typography display="block" noWrap>
+                      A: {imageItem.highBoostingA}
+                    </Typography>
                   )}
                 </>
               )}

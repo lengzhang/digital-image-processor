@@ -51,19 +51,30 @@ export type SpatialFilteringMethodType =
   | "median-filter"
   | "sharpening-laplacian-filter"
   | "high-boosting-filter";
+export type SharpeningLaplacianMaskMode =
+  | "mask-4"
+  | "mask-8"
+  | "mask-4-reverse"
+  | "mask-8-reverse";
 export type SpatialFilteringItem = DefaultItemProperties & {
   type: "spatial-filtering";
-  filterSize: number; // (filterSize x filterSize)
 } & (
     | {
         method: "smoothing-filter";
+        filterSize: number; // (filterSize x filterSize)
         sigma: number; // For smoothing filter
       }
     | {
-        method: "median-filter" | "sharpening-laplacian-filter";
+        method: "median-filter";
+        filterSize: number; // (filterSize x filterSize)
+      }
+    | {
+        method: "sharpening-laplacian-filter";
+        maskMode: SharpeningLaplacianMaskMode;
       }
     | {
         method: "high-boosting-filter";
+        filterSize: number; // (filterSize x filterSize)
         highBoostingA: number; // Property for high-boosting filter
       }
   );
@@ -132,6 +143,7 @@ export interface SpatialFilteringParams {
   size: number; // Kernel size
   highBoostingA?: number; // Property for high-boosting filter
   sigma?: number; // For smoothing filter
+  maskMode?: SharpeningLaplacianMaskMode;
 }
 
 export interface ImageItemsContext {
