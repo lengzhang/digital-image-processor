@@ -81,7 +81,8 @@ const bitItems = [1, 2, 3, 4, 5, 6, 7, 8].map((v) => ({
 
 const useStyles = makeStyles((theme) => ({
   textField: {
-    minWidth: 120,
+    minWidth: theme.spacing(15),
+    width: theme.spacing(15),
   },
 }));
 
