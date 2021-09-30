@@ -1,19 +1,20 @@
-import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
+
+import { Form } from "react-final-form";
 
 import AppBar from "@material-ui/core/AppBar";
 import Box from "@material-ui/core/Box";
 import Container from "@material-ui/core/Container";
-import Toolbar from "@material-ui/core/Toolbar";
 import LinearProgress from "@material-ui/core/LinearProgress";
+import Toolbar from "@material-ui/core/Toolbar";
 
+import Footer from "src/components/Footer";
 import ImageUploadButton from "src/components/common/ImageUploadButton";
 
-import ControllerForm from "./ControllerForm";
-import useController from "./useController";
-import { Form } from "react-final-form";
-
 import MainController from "./MainController";
+import ControllerForm from "./ControllerForm";
+
+import useController from "./useController";
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -21,7 +22,6 @@ const useStyles = makeStyles((theme) => ({
     left: 0,
     right: 0,
     bottom: 0,
-    marginBottom: theme.spacing(2),
   },
   select: {
     minWidth: 120,
@@ -89,6 +89,7 @@ const Controller = () => {
           )}
         </AppBar>
       )}
+      <Footer />
     </Container>
   );
 };

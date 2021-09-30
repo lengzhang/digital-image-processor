@@ -1,12 +1,12 @@
 import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 
+import { Field, useForm } from "react-final-form";
+
 import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
 
 import SelectField from "src/components/common/SelectField";
-
-import { Field, useForm } from "react-final-form";
 
 import useImageItems from "src/hooks/useImageItems";
 
@@ -53,10 +53,10 @@ const MainController: React.FC<MainControllerProps> = ({ disabled }) => {
       <Field
         name="source"
         component={SelectField}
-        disabled={disabled}
         items={sourceItems}
         textFieldProps={{
           className: classes.select,
+          disabled,
           label: "Source",
           variant: "outlined",
           required: true,

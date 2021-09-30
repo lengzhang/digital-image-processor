@@ -70,7 +70,7 @@ const ImageBlock: React.FC<ImageBlockProps> = ({ index, item }) => {
         <Box display="flex" flexWrap="no-wrap" style={{ overflowX: "auto" }}>
           {list.map(({ text, matrix, imageItem }, i) => (
             <Box key={i} margin={2}>
-              <Box maxWidth={600} maxHeight={600} overflow="auto">
+              <Box overflow="auto">
                 <ImageCanvas matrix={matrix} />
               </Box>
               <Typography display="block" noWrap>

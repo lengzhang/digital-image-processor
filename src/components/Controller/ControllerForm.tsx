@@ -1,16 +1,17 @@
 import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 
+import { Field, useFormState, useForm } from "react-final-form";
+
 import Box from "@material-ui/core/Box";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 
-import { Field, useFormState, useForm } from "react-final-form";
-
-import SelectField from "src/components/common/SelectField";
+import BitsCheckboxField from "src/components/common/BitsCheckboxField";
 import InputField from "src/components/common/InputField";
 import RadioField, { RadioFieldItem } from "src/components/common/RadioField";
-import BitsCheckboxField from "src/components/common/BitsCheckboxField";
+import SelectField from "src/components/common/SelectField";
+
 import { ImageItem } from "src/hooks/useImageItems";
 
 interface ControllerFormProps {
@@ -161,6 +162,7 @@ const ControllerForm: React.FC<ControllerFormProps> = ({ disabled, items }) => {
               component={InputField}
               textFieldProps={{
                 className: classes.textField,
+                disabled,
                 label: "Width",
                 required: true,
                 size: "small",
@@ -182,6 +184,7 @@ const ControllerForm: React.FC<ControllerFormProps> = ({ disabled, items }) => {
               component={InputField}
               textFieldProps={{
                 className: classes.textField,
+                disabled,
                 label: "Height",
                 required: true,
                 size: "small",
@@ -244,6 +247,7 @@ const ControllerForm: React.FC<ControllerFormProps> = ({ disabled, items }) => {
                 component={InputField}
                 textFieldProps={{
                   className: classes.textField,
+                  disabled,
                   label: "Size",
                   required: true,
                   size: "small",
@@ -289,6 +293,7 @@ const ControllerForm: React.FC<ControllerFormProps> = ({ disabled, items }) => {
                 component={InputField}
                 textFieldProps={{
                   className: classes.textField,
+                  disabled,
                   label: "Kernel Size",
                   required: true,
                   size: "small",
@@ -312,6 +317,7 @@ const ControllerForm: React.FC<ControllerFormProps> = ({ disabled, items }) => {
                 component={InputField}
                 textFieldProps={{
                   className: classes.textField,
+                  disabled,
                   label: "σ (sigma)",
                   required: true,
                   size: "small",
