@@ -99,17 +99,22 @@ const ImageBlock: React.FC<ImageBlockProps> = ({ index, item }) => {
                   <Typography display="block" noWrap>
                     Filter Mode: {imageItem.method}
                   </Typography>
-                  {(imageItem.method === "smoothing-filter" ||
+                  {(imageItem.method === "gaussian-smoothing-filter" ||
                     imageItem.method === "median-filter") && (
                     <Typography display="block" noWrap>
                       Filter Kernel Size: {imageItem.filterSize}x
                       {imageItem.filterSize}
                     </Typography>
                   )}
-                  {imageItem.method === "smoothing-filter" && (
-                    <Typography display="block" noWrap>
-                      σ (Sigma): {imageItem.sigma}
-                    </Typography>
+                  {imageItem.method === "gaussian-smoothing-filter" && (
+                    <>
+                      <Typography display="block" noWrap>
+                        K: {imageItem.K}
+                      </Typography>
+                      <Typography display="block" noWrap>
+                        σ (Sigma): {imageItem.sigma}
+                      </Typography>
+                    </>
                   )}
                   {imageItem.method === "sharpening-laplacian-filter" && (
                     <>

@@ -3,22 +3,24 @@ import { Pixel } from "./imageDataUtils";
 import runImageProcessWorker from "./runImageProcessWorker";
 
 const SMOOTHING_FILTER_WORKER =
-  "/web-workers/spatialFiltering/smoothingFilter.js";
+  "/web-workers/spatialFiltering/gaussianSmoothingFilter.js";
 const MEDIAN_FILTER_WORKER = "/web-workers/spatialFiltering/medianFilter.js";
 const SHARPENING_LAPLACIAN_FILTER_WORKER =
   "/web-workers/spatialFiltering/sharpeningLaplacianFilter.js";
 const HIGH_BOOSTING_FILTER_WORKER =
   "/web-workers/spatialFiltering/highBoostingFilter.js";
 
-export const smoothingFilter = async (
+export const gaussianSmoothingFilter = async (
   matrix: Pixel[][],
   size: number,
+  K: number,
   sigma: number
 ) => {
   const result = await runImageProcessWorker(
     SMOOTHING_FILTER_WORKER,
     matrix,
     size,
+    K,
     sigma
   );
   return result;

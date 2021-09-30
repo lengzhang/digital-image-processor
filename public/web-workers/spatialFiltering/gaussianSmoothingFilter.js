@@ -10,12 +10,13 @@ const colors = ["R", "G", "B"];
 
 /**
  * Generate gaussian mask
- * H_i,j = (1 / (2πσ^2)) * e^(-(x^2 + y^2) / (2σ^2))
+ * G(x, y) = K * e^(-(x^2 + y^2) / (2σ^2))
  * @param {number} size   // Kernel size
+ * @param {number} K
  * @param {number} sigma  // σ
  * @returns {[number[][], number]}
  */
-const generateGaussianTemplate = (size, sigma) => {
+const generateGaussianTemplate = (size, K, sigma) => {
   /**
    * @type {number[][]}
    */
@@ -30,19 +31,18 @@ const generateGaussianTemplate = (size, sigma) => {
     const x2 = Math.pow(j - offset, 2); // x^2
     for (let i = 0; i < size; i++) {
       const y2 = Math.pow(i - offset, 2); // y^2
-      const a = 2 * Math.PI * sigma2; // 2πσ^2
-      const b = Math.exp(-(x2 + y2) / (2 * sigma2)); // e^(-(x^2 + y^2) / (2σ^2)
-      template[j][i] = b / a;
+      const a = Math.exp(-(x2 + y2) / (2 * sigma2)); // e^(-(x^2 + y^2) / (2σ^2))
+      template[j][i] = K * a;
     }
   }
 
   // Normalize the mask by template[0][0]
-  const k = template[0][0];
+  const n = template[0][0];
   let sum = 0;
 
   for (let j = 0; j < size; j++) {
     for (let i = 0; i < size; i++) {
-      template[j][i] = Math.floor(template[j][i] / k);
+      template[j][i] = Math.floor(template[j][i] / n);
       sum += template[j][i];
     }
   }
@@ -56,7 +56,7 @@ const generateGaussianTemplate = (size, sigma) => {
  * @param {number[][]} mask
  * @param {number} maskSum
  */
-const smoothingFilter = (matrix, mask, maskSum) => {
+const gaussianSmoothingFilter = (matrix, mask, maskSum) => {
   const col = matrix.length;
   const row = matrix[0].length;
   const offset = Math.floor(mask.length / 2);
@@ -94,9 +94,9 @@ const smoothingFilter = (matrix, mask, maskSum) => {
 
 this.self.addEventListener("message", (evt) => {
   /** @type {[Pixel[][], number, number]} */
-  const [matrix, size, sigma] = evt.data;
-  const [mask, sum] = generateGaussianTemplate(size, sigma);
-  const result = smoothingFilter(matrix, mask, sum);
+  const [matrix, size, K, sigma] = evt.data;
+  const [mask, sum] = generateGaussianTemplate(size, K, sigma);
+  const result = gaussianSmoothingFilter(matrix, mask, sum);
   this.self.postMessage(result);
   this.self.close();
 });

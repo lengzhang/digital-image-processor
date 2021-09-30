@@ -55,7 +55,7 @@ const histogramEqualizationItems: SelectionItem[] = [
 ];
 
 const spatialFilterMethodItems: SelectionItem[] = [
-  { value: "smoothing-filter", text: "Gaussian Smoothing Filter" },
+  { value: "gaussian-smoothing-filter", text: "Gaussian Smoothing Filter" },
   { value: "median-filter", text: "Median Filter" },
   { value: "sharpening-laplacian-filter", text: "Sharpening Laplacian Filter" },
   { value: "high-boosting-filter", text: "High Boosting Filter" },
@@ -284,7 +284,7 @@ const ControllerForm: React.FC<ControllerFormProps> = ({ disabled, items }) => {
               }}
             />
           </Grid>
-          {(values["spatial-filter-type"] === "smoothing-filter" ||
+          {(values["spatial-filter-type"] === "gaussian-smoothing-filter" ||
             values["spatial-filter-type"] === "median-filter") && (
             <Grid item>
               <Field
@@ -309,22 +309,39 @@ const ControllerForm: React.FC<ControllerFormProps> = ({ disabled, items }) => {
               />
             </Grid>
           )}
-          {values["spatial-filter-type"] === "smoothing-filter" && (
-            <Grid item>
-              <Field
-                allowNull
-                name="smoothing-filter-sigma"
-                component={InputField}
-                textFieldProps={{
-                  className: classes.textField,
-                  disabled,
-                  label: "σ (sigma)",
-                  required: true,
-                  size: "small",
-                  type: "number",
-                }}
-              />
-            </Grid>
+          {values["spatial-filter-type"] === "gaussian-smoothing-filter" && (
+            <>
+              <Grid item>
+                <Field
+                  allowNull
+                  name="gaussian-smoothing-filter-K"
+                  component={InputField}
+                  textFieldProps={{
+                    className: classes.textField,
+                    disabled,
+                    label: "K",
+                    required: true,
+                    size: "small",
+                    type: "number",
+                  }}
+                />
+              </Grid>
+              <Grid item>
+                <Field
+                  allowNull
+                  name="gaussian-smoothing-filter-sigma"
+                  component={InputField}
+                  textFieldProps={{
+                    className: classes.textField,
+                    disabled,
+                    label: "σ (sigma)",
+                    required: true,
+                    size: "small",
+                    type: "number",
+                  }}
+                />
+              </Grid>
+            </>
           )}
           {values["spatial-filter-type"] === "sharpening-laplacian-filter" && (
             <>

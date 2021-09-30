@@ -47,7 +47,7 @@ export interface HistogramEqualizationItem extends DefaultItemProperties {
 
 /** Spatial Filtering */
 export type SpatialFilteringMethodType =
-  | "smoothing-filter"
+  | "gaussian-smoothing-filter"
   | "median-filter"
   | "sharpening-laplacian-filter"
   | "high-boosting-filter";
@@ -60,8 +60,9 @@ export type SpatialFilteringItem = DefaultItemProperties & {
   type: "spatial-filtering";
 } & (
     | {
-        method: "smoothing-filter";
+        method: "gaussian-smoothing-filter";
         filterSize: number; // (filterSize x filterSize)
+        K: number;
         sigma: number; // For smoothing filter
       }
     | {
@@ -143,7 +144,8 @@ export interface SpatialFilteringParams {
   method: SpatialFilteringMethodType;
   size: number; // Kernel size
   /** Smoothing Filter */
-  sigma?: number; // For smoothing filter
+  K?: number;
+  sigma?: number;
   /** Sharpening Laplacian Filter */
   maskMode?: SharpeningLaplacianMaskMode;
   processMode?: string;

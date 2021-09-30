@@ -326,6 +326,7 @@ const ImageItemsProvider: React.FC = ({ children }) => {
       method,
       size,
       /** Smoothing Filter */
+      K,
       sigma,
       /** Sharpening Laplacian Filter */
       maskMode,
@@ -344,21 +345,24 @@ const ImageItemsProvider: React.FC = ({ children }) => {
         const sourceItem = items[source];
 
         let item: ImageItem | null = null;
-        if (method === "smoothing-filter") {
+        if (method === "gaussian-smoothing-filter") {
+          if (typeof K !== "number") throw new Error("K is invalid");
           if (typeof sigma !== "number") throw new Error("Sigma is invalid");
-          const matrix = await spatialFilterOperations.smoothingFilter(
+          const matrix = await spatialFilterOperations.gaussianSmoothingFilter(
             sourceItem.matrix,
             size,
+            K,
             sigma
           );
           item = {
             type: "spatial-filtering",
-            method: "smoothing-filter",
+            method: "gaussian-smoothing-filter",
             matrix,
             source,
             bit: sourceItem.bit,
             isGrayScaled: sourceItem.isGrayScaled,
             filterSize: size,
+            K,
             sigma,
           };
         } else if (method === "median-filter") {
