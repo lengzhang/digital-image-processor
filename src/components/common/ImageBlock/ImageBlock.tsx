@@ -1,70 +1,53 @@
-import React, { useMemo } from "react";
+import React from "react";
 
 import Box from "@material-ui/core/Box";
+import Button from "@material-ui/core/Button";
 import Divider from "@material-ui/core/Divider";
 import Paper from "@material-ui/core/Paper";
+import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 
 import ImageCanvas from "src/components/common/ImageCanvas";
 
-import { removeDashAndUppercaseFirstLetter } from "src/utils";
-import { Pixel } from "src/utils/imageDataUtils";
+import { ImageItem } from "src/hooks/useImageItems";
 
-import useImageItems, { ImageItem } from "src/hooks/useImageItems";
+import HistogramBarChart from "src/components/common/HistogramBarChart";
+
+import useImageBlock from "./useImageBlock";
+
+const colors: ("R" | "G" | "B")[] = ["R", "G", "B"];
 
 interface ImageBlockProps {
   index: number;
   item: ImageItem;
 }
 
-interface Item {
-  text: string;
-  matrix: Pixel[][];
-  imageItem: ImageItem;
-}
-
 const ImageBlock: React.FC<ImageBlockProps> = ({ index, item }) => {
-  const { state } = useImageItems();
-
-  const source = useMemo(
-    () => state.items.find((_, i) => i === item.source),
-    [state.items, item.source]
-  );
-
-  const list = useMemo(() => {
-    const newList: Item[] = [];
-    if (!!source) {
-      newList.push({
-        text: `Source[${item.source}] (${source.matrix[0].length} x ${source.matrix.length})`,
-        matrix: source.matrix,
-        imageItem: source,
-      });
-    }
-    newList.push({
-      text: `${index === 0 ? "" : "Result"} (${item.matrix[0].length} x ${
-        item.matrix.length
-      })`,
-      matrix: item.matrix,
-      imageItem: item,
+  const { histogram, list, title, showHistogram, onClickHistogram } =
+    useImageBlock({
+      index,
+      item,
     });
-    return newList;
-  }, [index, item, source]);
-
-  const title = useMemo(
-    () =>
-      (index === 0 ? "" : `[${index}] `) +
-      removeDashAndUppercaseFirstLetter(item.type) +
-      (item.type === "spatial-resolution"
-        ? `: ${removeDashAndUppercaseFirstLetter(item.method)}`
-        : ""),
-    [index, item]
-  );
 
   return (
     <Box>
       <Paper>
         <Box padding={2}>
-          <Typography variant="h6">{title}</Typography>
+          <Grid container spacing={1} direction="column">
+            <Grid item>
+              <Typography variant="h6">{title}</Typography>
+            </Grid>
+            <Grid item>
+              <Button
+                onClick={onClickHistogram}
+                variant="outlined"
+                color={showHistogram ? "primary" : "secondary"}
+                size="small"
+              >
+                {showHistogram ? "Showing" : "Hiding"} Histogram
+              </Button>
+            </Grid>
+          </Grid>
         </Box>
         <Divider light variant="fullWidth" />
         <Box display="flex" flexWrap="no-wrap" style={{ overflowX: "auto" }}>
@@ -141,6 +124,29 @@ const ImageBlock: React.FC<ImageBlockProps> = ({ index, item }) => {
             </Box>
           ))}
         </Box>
+        {showHistogram && (
+          <Grid component={Box} container wrap="nowrap" spacing={1} padding={1}>
+            {item.isGrayScaled ? (
+              <Grid item xs={4}>
+                <HistogramBarChart
+                  label="Histogram Gray"
+                  data={histogram?.R ?? null}
+                  color="GRAY"
+                />
+              </Grid>
+            ) : (
+              colors.map((color) => (
+                <Grid key={color} item xs={4}>
+                  <HistogramBarChart
+                    label={`Histogram ${color}`}
+                    data={histogram?.[color] ?? null}
+                    color={color}
+                  />
+                </Grid>
+              ))
+            )}
+          </Grid>
+        )}
       </Paper>
     </Box>
   );
