@@ -3,9 +3,26 @@ import { useCallback } from "react";
 import useMessages from "src/hooks/useMessages";
 import * as spatialResolution from "src/utils/spatialResolution";
 
-import { ImageItemsDispatch, ImageItemsState } from "./types";
+import {
+  ImageItemsDispatch,
+  ImageItemsState,
+  DefaultItemProperties,
+} from "./types";
 
 /** Spatial Resolution */
+
+export type SpatialResolutionMethodType =
+  | "nearest-neighbor-interpolation"
+  | "linear-interpolation-x"
+  | "linear-interpolation-y"
+  | "bilinear-interpolation";
+
+export interface SpatialResolutionItem extends DefaultItemProperties {
+  type: "spatial-resolution";
+  method: SpatialResolutionMethodType;
+  width: number;
+  height: number;
+}
 export interface SpatialResolutionParams {
   source: number;
   width: number;
@@ -46,7 +63,7 @@ const useSpatialResolution = (
             method: "nearest-neighbor-interpolation",
             matrix,
             bit: sourceItem.bit,
-            isGrayScaled: false,
+            isGrayScaled: sourceItem.isGrayScaled,
             ...params,
           },
         });
@@ -96,7 +113,7 @@ const useSpatialResolution = (
             method: `linear-interpolation-${coor}`,
             matrix,
             bit: sourceItem.bit,
-            isGrayScaled: false,
+            isGrayScaled: sourceItem.isGrayScaled,
             ...params,
           },
         });
@@ -140,7 +157,7 @@ const useSpatialResolution = (
             method: "bilinear-interpolation",
             matrix,
             bit: sourceItem.bit,
-            isGrayScaled: false,
+            isGrayScaled: sourceItem.isGrayScaled,
             ...params,
           },
         });

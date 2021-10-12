@@ -2,8 +2,13 @@ import React from "react";
 import { BitType } from "src/utils/grayLevelResolution";
 import { Pixel } from "src/utils/imageDataUtils";
 
-import useSpatialResolution from "./useSpatialResolution";
+import useSpatialResolution, {
+  SpatialResolutionItem,
+} from "./useSpatialResolution";
 import useSpatialFilter, { SpatialFilteringItem } from "./useSpatialFilter";
+import useNoiseDistribution, {
+  NoiseDistributionItem,
+} from "./useNoiseDistribution";
 
 export interface DefaultItemProperties {
   matrix: Pixel[][];
@@ -18,18 +23,6 @@ export interface OriginalItem extends DefaultItemProperties {
 }
 
 /** Spatial Resolution */
-export type SpatialResolutionMethodType =
-  | "nearest-neighbor-interpolation"
-  | "linear-interpolation-x"
-  | "linear-interpolation-y"
-  | "bilinear-interpolation";
-
-export interface SpatialResolutionItem extends DefaultItemProperties {
-  type: "spatial-resolution";
-  method: SpatialResolutionMethodType;
-  width: number;
-  height: number;
-}
 
 /** Gray Level Resolution */
 export interface GrayLevelResolutionItem extends DefaultItemProperties {
@@ -49,19 +42,20 @@ export interface HistogramEqualizationItem extends DefaultItemProperties {
   heMode: string;
 }
 
-/** Spatial Filtering */
-
 type ImageItemsStatus =
   | "idle"
   | "setting-original-file"
-  | "nearest-neighbor-interpolation"
-  | "linear-interpolation-x"
-  | "linear-interpolation-y"
-  | "bilinear-interpolation"
+  | SpatialResolutionItem["method"]
+  // | "nearest-neighbor-interpolation"
+  // | "linear-interpolation-x"
+  // | "linear-interpolation-y"
+  // | "bilinear-interpolation"
   | "gray-level-resolution"
   | "bit-planes-removing"
   | "histogram-equalization"
-  | "spatial-filtering";
+  | SpatialFilteringItem["type"]
+  // | "spatial-filtering"
+  | NoiseDistributionItem["method"];
 
 export type ImageItem =
   | OriginalItem
@@ -69,7 +63,8 @@ export type ImageItem =
   | GrayLevelResolutionItem
   | BitPlanesRemovingItem
   | HistogramEqualizationItem
-  | SpatialFilteringItem;
+  | SpatialFilteringItem
+  | NoiseDistributionItem;
 
 export interface ImageItemsState {
   status: ImageItemsStatus;
@@ -105,7 +100,8 @@ export interface HistogramEqualizationParams {
 
 export interface ImageItemsContext
   extends ReturnType<typeof useSpatialResolution>,
-    ReturnType<typeof useSpatialFilter> {
+    ReturnType<typeof useSpatialFilter>,
+    ReturnType<typeof useNoiseDistribution> {
   state: ImageItemsState;
   initialize: () => void;
   popItem: () => void;

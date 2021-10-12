@@ -11,6 +11,8 @@ import useMessages from "src/hooks/useMessages";
 
 import { imageItemsContext } from "./useImageItems";
 import useSpatialResolution from "./useSpatialResolution";
+import useSpatialFilter from "./useSpatialFilter";
+import useNoiseDistribution from "./useNoiseDistribution";
 
 import {
   ImageItemsState,
@@ -20,7 +22,6 @@ import {
   HistogramEqualizationParams,
   BitPlanesRemovingParams,
 } from "./types";
-import useSpatialFilter from "./useSpatialFilter";
 
 const initialState: ImageItemsState = {
   status: "idle",
@@ -62,17 +63,9 @@ const ImageItemsProvider: React.FC = ({ children }) => {
   const { pushMessage } = useMessages();
   const [state, dispatch] = useReducer(reducer, { ...initialState });
 
-  const {
-    nearestNeighborInterpolation,
-    linearInterpolation,
-    bilinearInterpolation,
-  } = useSpatialResolution(state, dispatch);
-  const {
-    gaussianSmoothingFilter,
-    medianFilter,
-    sharpeningLaplacianFilter,
-    highBoostingFilter,
-  } = useSpatialFilter(state, dispatch);
+  const spatialResolution = useSpatialResolution(state, dispatch);
+  const spatialFilter = useSpatialFilter(state, dispatch);
+  const noiseDistribution = useNoiseDistribution(state, dispatch);
 
   useEffect(() => {
     if (!!state.error) {
@@ -239,18 +232,14 @@ const ImageItemsProvider: React.FC = ({ children }) => {
         popItem,
         addOriginalImage,
         /** Spatial Resolution */
-        nearestNeighborInterpolation,
-        linearInterpolation,
-        bilinearInterpolation,
+        ...spatialResolution,
 
         grayLevelResolution,
         bitPlanesRemoving,
         histogramEqualization,
         /** Spatial Filter */
-        gaussianSmoothingFilter,
-        medianFilter,
-        sharpeningLaplacianFilter,
-        highBoostingFilter,
+        ...spatialFilter,
+        ...noiseDistribution,
       }}
     >
       {children}

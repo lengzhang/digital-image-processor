@@ -14,6 +14,7 @@ import SpatialFilter from "./SpatialFilter";
 
 import useStyles from "./useStyles";
 import { ControllerFormProps, SelectionItem } from "./types";
+import NoiseDistribution from "./NoiseDistribution";
 
 const resolutionItems: SelectionItem[] = [
   { value: "", text: "None" },
@@ -22,6 +23,7 @@ const resolutionItems: SelectionItem[] = [
   { value: "histogram-equalization", text: "Histogram Equalization" },
   { value: "spatial-filter", text: "Spatial Filter" },
   { value: "bit-planes-removing", text: "Bit Planes Removing" },
+  { value: "noise-distribution", text: "Noise Distribution" },
 ];
 
 const ControllerForm: React.FC<ControllerFormProps> = ({ disabled }) => {
@@ -38,6 +40,7 @@ const ControllerForm: React.FC<ControllerFormProps> = ({ disabled }) => {
         | "histogram-equalization"
         | "spatial-filter"
         | "bit-planes-removing"
+        | "noise-distribution"
     ) {
       case "spatial-resolution":
         return <SpatialResolution disabled={disabled} />;
@@ -59,6 +62,8 @@ const ControllerForm: React.FC<ControllerFormProps> = ({ disabled }) => {
             />
           </Grid>
         );
+      case "noise-distribution":
+        return <NoiseDistribution disabled={disabled} />;
     }
     return null;
   }, [values?.type, disabled]);

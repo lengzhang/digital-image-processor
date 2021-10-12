@@ -8,6 +8,7 @@ import {
   spatialFilteringMethodType,
   sharpeningLaplacianMaskMode,
 } from "src/hooks/useImageItems/useSpatialFilter";
+import { noiseDistributionMethods } from "src/hooks/useImageItems/useNoiseDistribution";
 
 const useController = () => {
   const {
@@ -22,6 +23,7 @@ const useController = () => {
     medianFilter,
     sharpeningLaplacianFilter,
     highBoostingFilter,
+    gaussianNoiseDistribution,
   } = useImageItems();
 
   const onSubmit = async (values: Record<string, string>, formApi: FormApi) => {
@@ -101,6 +103,17 @@ const useController = () => {
           blurredImage: parseInt(values["high-boosting-filter-blurred-image"]),
           highBoostingK: parseInt(values["high-boosting-filter-k"]) || 1,
         });
+      }
+    } else if (values.type === "noise-distribution") {
+      const method = noiseDistributionMethods.find(
+        (m) => m === values?.["noise-distribution-type"]
+      );
+
+      if (method === "noise-distribution-gaussian") {
+        const mean = parseInt(values["noise-distribution-gaussian-mean"]);
+        const sigma = parseFloat(values["noise-distribution-gaussian-sigma"]);
+        const k = parseFloat(values["noise-distribution-gaussian-k"]);
+        await gaussianNoiseDistribution({ source, mean, sigma, k });
       }
     }
     scrollToBottom();
