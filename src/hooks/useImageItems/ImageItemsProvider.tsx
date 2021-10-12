@@ -72,13 +72,13 @@ const ImageItemsProvider: React.FC = ({ children }) => {
 
   const addOriginalImage = async (file: File) => {
     const imageData = await imageFileToImageData(file);
-    const matrix = imageDataToPixelMatrix(imageData);
+    const [matrix, isGrayScaled] = imageDataToPixelMatrix(imageData);
     const item: OriginalItem = {
       type: "original",
       matrix,
       source: null,
       bit: 8,
-      isGrayScaled: false,
+      isGrayScaled,
     };
     dispatch({ type: "push-item", item });
   };

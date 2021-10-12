@@ -27,8 +27,12 @@ export interface Pixel {
 
 export type PixelKey = keyof Pixel;
 
-export const imageDataToPixelMatrix = (imageData: ImageData): Pixel[][] => {
+export const imageDataToPixelMatrix = (
+  imageData: ImageData
+): [Pixel[][], boolean] => {
   const matrix: Pixel[][] = [];
+
+  let isGrayScaled = true;
 
   for (let i = 0; i < imageData.height; i++) {
     for (let j = 0; j < imageData.width; j++) {
@@ -39,10 +43,11 @@ export const imageDataToPixelMatrix = (imageData: ImageData): Pixel[][] => {
       const G = imageData.data[index + 1];
       const B = imageData.data[index + 2];
       const A = imageData.data[index + 3];
+      if (isGrayScaled && (R !== G || G !== B || B !== R)) isGrayScaled = false;
       matrix[i][j] = { R, G, B, A };
     }
   }
-  return matrix;
+  return [matrix, isGrayScaled];
 };
 
 export const pixelMatrixToImageData = (matrix: Pixel[][]) => {
