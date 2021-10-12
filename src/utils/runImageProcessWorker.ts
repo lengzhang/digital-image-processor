@@ -1,10 +1,9 @@
 import { Pixel } from "./imageDataUtils";
 
-const runImageProcessWorker = (
+export const runWokrer = <T>(
   workerPath: string,
-  sourceMatrix: Pixel[][],
   ...params: any[]
-): Promise<Pixel[][]> => {
+): Promise<T> => {
   return new Promise((resolve, reject) => {
     const worker = new Worker(workerPath);
     worker.addEventListener("message", (event) => {
@@ -16,8 +15,21 @@ const runImageProcessWorker = (
     worker.addEventListener("messageerror", (event) => {
       reject(event.data);
     });
-    worker.postMessage([sourceMatrix, ...params]);
+    worker.postMessage(params);
   });
+};
+
+const runImageProcessWorker = async (
+  workerPath: string,
+  sourceMatrix: Pixel[][],
+  ...params: any[]
+): Promise<Pixel[][]> => {
+  const result = await runWokrer<Pixel[][]>(
+    workerPath,
+    sourceMatrix,
+    ...params
+  );
+  return result;
 };
 
 export default runImageProcessWorker;

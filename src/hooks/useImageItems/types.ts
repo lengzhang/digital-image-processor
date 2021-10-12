@@ -83,7 +83,7 @@ export type SpatialFilteringItem = DefaultItemProperties & {
 
 type ImageItemsStatus =
   | "idle"
-  | "seting-original-file"
+  | "setting-original-file"
   | "nearest-neighbor-interpolation"
   | "linear-interpolation-x"
   | "linear-interpolation-y"

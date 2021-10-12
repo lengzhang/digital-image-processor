@@ -38,7 +38,6 @@ const reducer = (
       break;
 
     case "set-status":
-      state.status = action.status;
       state = { ...state, status: action.status };
       break;
 
@@ -60,7 +59,7 @@ const reducer = (
 };
 
 const ImageItemsProvider: React.FC = ({ children }) => {
-  const [state, dispatch] = useReducer(reducer, initialState);
+  const [state, dispatch] = useReducer(reducer, { ...initialState });
 
   const initialize = () => {
     dispatch({ type: "initialize" });
@@ -71,16 +70,25 @@ const ImageItemsProvider: React.FC = ({ children }) => {
   };
 
   const addOriginalImage = async (file: File) => {
-    const imageData = await imageFileToImageData(file);
-    const [matrix, isGrayScaled] = imageDataToPixelMatrix(imageData);
-    const item: OriginalItem = {
-      type: "original",
-      matrix,
-      source: null,
-      bit: 8,
-      isGrayScaled,
-    };
-    dispatch({ type: "push-item", item });
+    dispatch({ type: "set-status", status: "setting-original-file" });
+    try {
+      const imageData = await imageFileToImageData(file);
+      const [matrix, isGrayScaled] = await imageDataToPixelMatrix(imageData);
+      const item: OriginalItem = {
+        type: "original",
+        matrix,
+        source: null,
+        bit: 8,
+        isGrayScaled,
+      };
+      dispatch({ type: "push-item", item });
+    } catch (error: any) {
+      dispatch({
+        type: "set-error",
+        error: error?.message ?? "Adding original image faile",
+      });
+    }
+    dispatch({ type: "set-status", status: "idle" });
   };
 
   /** Nearest Neighbor Interpolation */

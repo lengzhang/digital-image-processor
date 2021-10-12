@@ -1,5 +1,7 @@
 import Jimp from "jimp";
 
+import { runWokrer } from "./runImageProcessWorker";
+
 export const imageFileToImageData = (file: File): Promise<ImageData> => {
   return new Promise((resolve, reject) => {
     const url = URL.createObjectURL(file);
@@ -27,26 +29,15 @@ export interface Pixel {
 
 export type PixelKey = keyof Pixel;
 
-export const imageDataToPixelMatrix = (
+const IMAGE_DATA_TO_PIXEL_MATRIX_WORKER =
+  "/web-workers/imageDataToPixelMatrix.js";
+export const imageDataToPixelMatrix = async (
   imageData: ImageData
-): [Pixel[][], boolean] => {
-  const matrix: Pixel[][] = [];
-
-  let isGrayScaled = true;
-
-  for (let i = 0; i < imageData.height; i++) {
-    for (let j = 0; j < imageData.width; j++) {
-      if (matrix?.[i] === undefined) matrix.push([]);
-      const index = i * imageData.width * 4 + j * 4;
-
-      const R = imageData.data[index + 0];
-      const G = imageData.data[index + 1];
-      const B = imageData.data[index + 2];
-      const A = imageData.data[index + 3];
-      if (isGrayScaled && (R !== G || G !== B || B !== R)) isGrayScaled = false;
-      matrix[i][j] = { R, G, B, A };
-    }
-  }
+): Promise<[Pixel[][], boolean]> => {
+  const [matrix, isGrayScaled] = await runWokrer<[Pixel[][], boolean]>(
+    IMAGE_DATA_TO_PIXEL_MATRIX_WORKER,
+    imageData
+  );
   return [matrix, isGrayScaled];
 };
 
