@@ -12,7 +12,8 @@ import Footer from "src/components/Footer";
 import ImageUploadButton from "src/components/common/ImageUploadButton";
 
 import MainController from "./MainController";
-import ControllerForm from "./ControllerForm";
+// import ControllerForm from "./ControllerForm";
+import ControllerForm from "src/components/common/ControllerForm";
 
 import useController from "./useController";
 
@@ -69,7 +70,7 @@ const Controller = () => {
                   paddingBottom={1}
                   overflow="auto"
                 >
-                  <ControllerForm disabled={disabled} items={items} />
+                  <ControllerForm disabled={disabled} />
                 </Toolbar>
                 <Toolbar
                   variant="dense"

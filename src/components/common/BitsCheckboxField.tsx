@@ -9,7 +9,9 @@ import FormControlLabel from "@material-ui/core/FormControlLabel";
 import FormControl from "@material-ui/core/FormControl";
 import FormLabel from "@material-ui/core/FormLabel";
 
-interface BitsCheckboxProps extends FieldRenderProps<any, HTMLElement> {}
+interface BitsCheckboxProps extends FieldRenderProps<any, HTMLElement> {
+  disabled?: boolean;
+}
 
 const MAX_BIT_VALUE = 255;
 
@@ -38,7 +40,10 @@ const booleanArrayToBitValue = (list: boolean[]) => {
   );
 };
 
-const BitsCheckboxField: React.FC<BitsCheckboxProps> = ({ input }) => {
+const BitsCheckboxField: React.FC<BitsCheckboxProps> = ({
+  input,
+  disabled,
+}) => {
   const classes = useStyles();
   const form = useForm();
   const [checkboxes, setCheckboxes] = React.useState(
@@ -76,6 +81,7 @@ const BitsCheckboxField: React.FC<BitsCheckboxProps> = ({ input }) => {
                   color="primary"
                   size="small"
                   onChange={onChecked(i)}
+                  disabled={disabled}
                 />
               }
               label={`${i + 1}`}

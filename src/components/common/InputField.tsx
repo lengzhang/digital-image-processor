@@ -16,7 +16,6 @@ const InputField: React.FC<InputProps> = ({ input, meta, textFieldProps }) => {
       InputLabelProps={{ shrink: true }}
       error={!!errorMessage}
       helperText={errorMessage || ""}
-      fullWidth
       {...textFieldProps}
       variant="outlined"
     />

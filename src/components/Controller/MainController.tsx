@@ -15,8 +15,9 @@ interface MainControllerProps {
 }
 
 const useStyles = makeStyles((theme) => ({
-  select: {
-    minWidth: 120,
+  selectField: {
+    minWidth: theme.spacing(15),
+    width: "max-content",
   },
 }));
 
@@ -55,7 +56,7 @@ const MainController: React.FC<MainControllerProps> = ({ disabled }) => {
         component={SelectField}
         items={sourceItems}
         textFieldProps={{
-          className: classes.select,
+          className: classes.selectField,
           disabled,
           label: "Source",
           variant: "outlined",
