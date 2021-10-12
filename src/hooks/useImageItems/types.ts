@@ -1,7 +1,11 @@
+import React from "react";
 import { BitType } from "src/utils/grayLevelResolution";
 import { Pixel } from "src/utils/imageDataUtils";
 
-interface DefaultItemProperties {
+import useSpatialResolution from "./useSpatialResolution";
+import useSpatialFilter, { SpatialFilteringItem } from "./useSpatialFilter";
+
+export interface DefaultItemProperties {
   matrix: Pixel[][];
   source: number | null;
   bit: BitType;
@@ -46,40 +50,6 @@ export interface HistogramEqualizationItem extends DefaultItemProperties {
 }
 
 /** Spatial Filtering */
-export type SpatialFilteringMethodType =
-  | "gaussian-smoothing-filter"
-  | "median-filter"
-  | "sharpening-laplacian-filter"
-  | "high-boosting-filter";
-export type SharpeningLaplacianMaskMode =
-  | "mask-4"
-  | "mask-8"
-  | "mask-4-reverse"
-  | "mask-8-reverse";
-export type SpatialFilteringItem = DefaultItemProperties & {
-  type: "spatial-filtering";
-} & (
-    | {
-        method: "gaussian-smoothing-filter";
-        filterSize: number; // (filterSize x filterSize)
-        K: number;
-        sigma: number; // For smoothing filter
-      }
-    | {
-        method: "median-filter";
-        filterSize: number; // (filterSize x filterSize)
-      }
-    | {
-        method: "sharpening-laplacian-filter";
-        maskMode: SharpeningLaplacianMaskMode;
-        processMode: "none" | "scaled" | "sharpened";
-      }
-    | {
-        method: "high-boosting-filter";
-        blurredImage: number; // index of the blurred image
-        highBoostingK: number; // Property for high-boosting filter
-      }
-  );
 
 type ImageItemsStatus =
   | "idle"
@@ -113,12 +83,7 @@ export type ImageItemsAction =
   | { type: "set-error"; error: string }
   | { type: "push-item"; item: ImageItem };
 
-/** Spatial Resolution */
-export interface SpatialResolutionParams {
-  source: number;
-  width: number;
-  height: number;
-}
+export type ImageItemsDispatch = React.Dispatch<ImageItemsAction>;
 
 /** Gray Level Resolution */
 export interface GrayLevelResolutionParams {
@@ -138,36 +103,15 @@ export interface HistogramEqualizationParams {
   size?: number; // Mask size for local
 }
 
-/** Spatial Filtering */
-export interface SpatialFilteringParams {
-  source: number;
-  method: SpatialFilteringMethodType;
-  size: number; // Kernel size
-  /** Smoothing Filter */
-  K?: number;
-  sigma?: number;
-  /** Sharpening Laplacian Filter */
-  maskMode?: SharpeningLaplacianMaskMode;
-  processMode?: string;
-  /** High-boosting Filter */
-  blurredImage?: number;
-  highBoostingK?: number; // Property for high-boosting filter
-}
-
-export interface ImageItemsContext {
+export interface ImageItemsContext
+  extends ReturnType<typeof useSpatialResolution>,
+    ReturnType<typeof useSpatialFilter> {
   state: ImageItemsState;
   initialize: () => void;
   popItem: () => void;
   addOriginalImage: (file: File) => Promise<void>;
-  nearestNeighborInterpolation: (
-    params: SpatialResolutionParams
-  ) => Promise<void>;
-  linearInterpolation: (
-    coor: "x" | "y"
-  ) => (params: SpatialResolutionParams) => Promise<void>;
-  bilinearInterpolation: (params: SpatialResolutionParams) => Promise<void>;
+
   grayLevelResolution: (params: GrayLevelResolutionParams) => Promise<void>;
   bitPlanesRemoving: (params: BitPlanesRemovingParams) => Promise<void>;
   histogramEqualization: (params: HistogramEqualizationParams) => Promise<void>;
-  spatialFiltering: (params: SpatialFilteringParams) => Promise<void>;
 }

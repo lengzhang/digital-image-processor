@@ -1,4 +1,4 @@
-import { SharpeningLaplacianMaskMode } from "src/hooks/useImageItems";
+import { SharpeningLaplacianMaskMode } from "src/hooks/useImageItems/useSpatialFilter";
 import { Pixel } from "./imageDataUtils";
 import runImageProcessWorker from "./runImageProcessWorker";
 

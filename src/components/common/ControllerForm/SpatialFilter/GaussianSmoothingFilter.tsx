@@ -40,36 +40,36 @@ const GaussianSmoothingFilter: React.FC<DefaultFieldsProps> = ({
           }}
           validate={kernelSizeValidation}
         />
-        <Grid item>
-          <Field
-            allowNull
-            name="gaussian-smoothing-filter-K"
-            component={InputField}
-            textFieldProps={{
-              className: classes.textField,
-              disabled,
-              label: "K",
-              required: true,
-              size: "small",
-              type: "number",
-            }}
-          />
-        </Grid>
-        <Grid item>
-          <Field
-            allowNull
-            name="gaussian-smoothing-filter-sigma"
-            component={InputField}
-            textFieldProps={{
-              className: classes.textField,
-              disabled,
-              label: "σ (sigma)",
-              required: true,
-              size: "small",
-              type: "number",
-            }}
-          />
-        </Grid>
+      </Grid>
+      <Grid item>
+        <Field
+          allowNull
+          name="gaussian-smoothing-filter-K"
+          component={InputField}
+          textFieldProps={{
+            className: classes.textField,
+            disabled,
+            label: "K",
+            required: true,
+            size: "small",
+            type: "number",
+          }}
+        />
+      </Grid>
+      <Grid item>
+        <Field
+          allowNull
+          name="gaussian-smoothing-filter-sigma"
+          component={InputField}
+          textFieldProps={{
+            className: classes.textField,
+            disabled,
+            label: "σ (sigma)",
+            required: true,
+            size: "small",
+            type: "number",
+          }}
+        />
       </Grid>
     </>
   );
