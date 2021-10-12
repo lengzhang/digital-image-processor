@@ -6,6 +6,7 @@ import Grid from "@material-ui/core/Grid";
 
 import Controller from "src/components/Controller";
 import ImageBlock from "src/components/common/ImageBlock";
+import { MesssagesProvider } from "src/hooks/useMessages";
 
 import useImageItems, { ImageItemsProvider } from "src/hooks/useImageItems";
 
@@ -14,7 +15,6 @@ const App = () => {
 
   return (
     <>
-      <CssBaseline />
       <Container maxWidth={false}>
         <Box paddingTop={2} paddingBottom={20}>
           <Grid container spacing={2} direction="column">
@@ -33,9 +33,14 @@ const App = () => {
 
 const AppWithProvider = () => {
   return (
-    <ImageItemsProvider>
-      <App />
-    </ImageItemsProvider>
+    <>
+      <CssBaseline />
+      <MesssagesProvider>
+        <ImageItemsProvider>
+          <App />
+        </ImageItemsProvider>
+      </MesssagesProvider>
+    </>
   );
 };
 

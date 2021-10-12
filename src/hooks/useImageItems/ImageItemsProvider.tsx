@@ -1,4 +1,4 @@
-import React, { useCallback, useReducer } from "react";
+import React, { useCallback, useEffect, useReducer } from "react";
 import {
   imageDataToPixelMatrix,
   imageFileToImageData,
@@ -9,7 +9,9 @@ import { bitPlanesRemoving as bpRemoving } from "src/utils/bitPlanesRemoving";
 import { histogramEqualization as hEqualization } from "src/utils/histogramEqualization";
 import * as spatialFilterOperations from "src/utils/spatialFilteringOperations";
 
-import { imageItemsContext } from "./context";
+import useMessages from "src/hooks/useMessages";
+
+import { imageItemsContext } from "./useImageItems";
 import {
   ImageItem,
   ImageItemsState,
@@ -59,7 +61,15 @@ const reducer = (
 };
 
 const ImageItemsProvider: React.FC = ({ children }) => {
+  const { pushMessage } = useMessages();
   const [state, dispatch] = useReducer(reducer, { ...initialState });
+
+  useEffect(() => {
+    if (!!state.error) {
+      pushMessage({ message: state.error, severity: "error" });
+      dispatch({ type: "set-error", error: initialState.error });
+    }
+  }, [state.error, pushMessage, dispatch]);
 
   const initialize = () => {
     dispatch({ type: "initialize" });
@@ -82,6 +92,7 @@ const ImageItemsProvider: React.FC = ({ children }) => {
         isGrayScaled,
       };
       dispatch({ type: "push-item", item });
+      pushMessage({ message: "Added original image", severity: "success" });
     } catch (error: any) {
       dispatch({
         type: "set-error",
@@ -123,17 +134,21 @@ const ImageItemsProvider: React.FC = ({ children }) => {
             ...params,
           },
         });
+        pushMessage({
+          message: "Calculating nearest neighbor interpolation succeeded",
+          severity: "success",
+        });
       } catch (error: any) {
         dispatch({
           type: "set-error",
           error:
             error?.message ??
-            "Calculating nearest neighbor interpolation faile",
+            "Calculating nearest neighbor interpolation failed",
         });
       }
       dispatch({ type: "set-status", status: "idle" });
     },
-    [state.items]
+    [state.items, pushMessage]
   );
 
   /** Linear Interpolation */
@@ -169,15 +184,19 @@ const ImageItemsProvider: React.FC = ({ children }) => {
             ...params,
           },
         });
+        pushMessage({
+          message: "Calculating linear interpolation succeeded",
+          severity: "success",
+        });
       } catch (error: any) {
         dispatch({
           type: "set-error",
-          error: error?.message ?? "Calculating linear interpolation faile",
+          error: error?.message ?? "Calculating linear interpolation failed",
         });
       }
       dispatch({ type: "set-status", status: "idle" });
     },
-    [state.items]
+    [state.items, pushMessage]
   );
 
   /** Bilinear Interpolation */
@@ -209,15 +228,19 @@ const ImageItemsProvider: React.FC = ({ children }) => {
             ...params,
           },
         });
+        pushMessage({
+          message: "Calculating bilinear interpolation succeeded",
+          severity: "success",
+        });
       } catch (error: any) {
         dispatch({
           type: "set-error",
-          error: error?.message ?? "Calculating bilinear interpolation faile",
+          error: error?.message ?? "Calculating bilinear interpolation failed",
         });
       }
       dispatch({ type: "set-status", status: "idle" });
     },
-    [state.items]
+    [state.items, pushMessage]
   );
 
   /** Gray Level Resolution */
@@ -242,15 +265,19 @@ const ImageItemsProvider: React.FC = ({ children }) => {
             isGrayScaled: true,
           },
         });
+        pushMessage({
+          message: "Calculating gray level resolution succeeded",
+          severity: "success",
+        });
       } catch (error: any) {
         dispatch({
           type: "set-error",
-          error: error?.message ?? "Calculating gray level resolution faile",
+          error: error?.message ?? "Calculating gray level resolution failed",
         });
       }
       dispatch({ type: "set-status", status: "idle" });
     },
-    [state.items]
+    [state.items, pushMessage]
   );
 
   /** Bit Planes Removing */
@@ -280,15 +307,19 @@ const ImageItemsProvider: React.FC = ({ children }) => {
             isGrayScaled: sourceItem.isGrayScaled,
           },
         });
+        pushMessage({
+          message: "Calculating bit planes removing succeeded",
+          severity: "success",
+        });
       } catch (error: any) {
         dispatch({
           type: "set-error",
-          error: error?.message ?? "Calculating bit planes removing faile",
+          error: error?.message ?? "Calculating bit planes removing failed",
         });
       }
       dispatch({ type: "set-status", status: "idle" });
     },
-    [state.items]
+    [state.items, pushMessage]
   );
 
   /** Histogram Equalization */
@@ -316,15 +347,19 @@ const ImageItemsProvider: React.FC = ({ children }) => {
             heMode: size === undefined ? "Global" : `Local ${size} x ${size}`,
           },
         });
+        pushMessage({
+          message: "Calculating histogram equalization succeeded",
+          severity: "success",
+        });
       } catch (error: any) {
         dispatch({
           type: "set-error",
-          error: error?.message ?? "Calculating histogram equalization faile",
+          error: error?.message ?? "Calculating histogram equalization failed",
         });
       }
       dispatch({ type: "set-status", status: "idle" });
     },
-    [state.items]
+    [state.items, pushMessage]
   );
 
   /** Spatial Filtering */
@@ -450,15 +485,19 @@ const ImageItemsProvider: React.FC = ({ children }) => {
           throw new Error("Spatial filtering method is invalid.");
 
         dispatch({ type: "push-item", item });
+        pushMessage({
+          message: "Calculating spatial filtering succeeded",
+          severity: "success",
+        });
       } catch (error: any) {
         dispatch({
           type: "set-error",
-          error: error?.message ?? "Calculating histogram equalization faile",
+          error: error?.message ?? "Calculating spatial filtering faile",
         });
       }
       dispatch({ type: "set-status", status: "idle" });
     },
-    [state.items]
+    [state.items, pushMessage]
   );
 
   return (

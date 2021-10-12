@@ -1,4 +1,4 @@
-import { useImageItems } from "./context";
+import useImageItems from "./useImageItems";
 
 export * from "./types";
 export { default as ImageItemsProvider } from "./ImageItemsProvider";
