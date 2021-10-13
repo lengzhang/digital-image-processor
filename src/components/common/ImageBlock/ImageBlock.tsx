@@ -13,6 +13,9 @@ import { ImageItem } from "src/hooks/useImageItems";
 
 import HistogramBarChart from "src/components/common/HistogramBarChart";
 
+import GeneralDetails from "./GeneralDetails";
+import SpatialFilterDetails from "./SpatialFilterDetails";
+
 import useImageBlock from "./useImageBlock";
 
 const colors: ("R" | "G" | "B")[] = ["R", "G", "B"];
@@ -59,70 +62,20 @@ const ImageBlock: React.FC<ImageBlockProps> = ({ index, item }) => {
               <Box overflow="auto">
                 <ImageCanvas matrix={matrix} />
               </Box>
-              <Typography display="block" noWrap>
-                {text}
-              </Typography>
-              <Typography display="block" noWrap>
-                Bit: {imageItem.bit}-bit
-              </Typography>
-              <Typography display="block" noWrap>
-                Gray Scaled: {imageItem.isGrayScaled.toString()}
-              </Typography>
+              <GeneralDetails text={text} {...imageItem} />
               {imageItem.type === "bit-planes-removing" && (
                 <Typography display="block" noWrap>
                   Bit Planes:{" "}
                   {imageItem.bits.toString(2).padStart(imageItem.bit, "0")}
                 </Typography>
               )}
-              {imageItem.type === "histogram-equalization" &&
-                !!imageItem.heMode && (
-                  <Typography display="block" noWrap>
-                    HE Mode: {imageItem.heMode}
-                  </Typography>
-                )}
+              {"heMode" in imageItem && (
+                <Typography display="block" noWrap>
+                  HE Mode: {imageItem.heMode}
+                </Typography>
+              )}
               {imageItem.type === "spatial-filtering" && (
-                <>
-                  <Typography display="block" noWrap>
-                    Filter Mode: {imageItem.method}
-                  </Typography>
-                  {(imageItem.method === "gaussian-smoothing-filter" ||
-                    imageItem.method === "median-filter") && (
-                    <Typography display="block" noWrap>
-                      Filter Kernel Size: {imageItem.filterSize}x
-                      {imageItem.filterSize}
-                    </Typography>
-                  )}
-                  {imageItem.method === "gaussian-smoothing-filter" && (
-                    <>
-                      <Typography display="block" noWrap>
-                        K: {imageItem.K}
-                      </Typography>
-                      <Typography display="block" noWrap>
-                        σ (Sigma): {imageItem.sigma}
-                      </Typography>
-                    </>
-                  )}
-                  {imageItem.method === "sharpening-laplacian-filter" && (
-                    <>
-                      <Typography display="block" noWrap>
-                        Mask Mode: {imageItem.maskMode}
-                      </Typography>
-                      <Typography display="block" noWrap>
-                        Process Mode: {imageItem.processMode}
-                      </Typography>
-                    </>
-                  )}
-                  {imageItem.method === "high-boosting-filter" && (
-                    <>
-                      <Typography display="block" noWrap>
-                        Blurred Image: {imageItem.blurredImage}
-                      </Typography>
-                      <Typography display="block" noWrap>
-                        k: {imageItem.highBoostingK}
-                      </Typography>
-                    </>
-                  )}
-                </>
+                <SpatialFilterDetails item={imageItem} />
               )}
             </Box>
           ))}
