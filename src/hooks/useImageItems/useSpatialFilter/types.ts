@@ -1,31 +1,31 @@
 import { DefaultItemProperties } from "../types";
 
 export type SpatialFilteringMethodType =
-  | "gaussian-smoothing-filter"
-  | "median-filter"
-  | "sharpening-laplacian-filter"
-  | "high-boosting-filter"
+  | "alpha-trimmed-mean-filter"
   | "arithmetic-mean-filter"
+  | "contraharmonic-mean-filter"
+  | "gaussian-smoothing-filter"
   | "geometric-mean-filter"
   | "harmonic-mean-filter"
-  | "contraharmonic-mean-filter"
+  | "high-boosting-filter"
   | "max-filter"
-  | "min-filter"
+  | "median-filter"
   | "midpoint-filter"
-  | "alpha-trimmed-mean-filter";
+  | "min-filter"
+  | "sharpening-laplacian-filter";
 export const spatialFilteringMethodType: SpatialFilteringMethodType[] = [
-  "gaussian-smoothing-filter",
-  "median-filter",
-  "sharpening-laplacian-filter",
-  "high-boosting-filter",
+  "alpha-trimmed-mean-filter",
   "arithmetic-mean-filter",
+  "contraharmonic-mean-filter",
+  "gaussian-smoothing-filter",
   "geometric-mean-filter",
   "harmonic-mean-filter",
-  "contraharmonic-mean-filter",
+  "high-boosting-filter",
   "max-filter",
-  "min-filter",
+  "median-filter",
   "midpoint-filter",
-  "alpha-trimmed-mean-filter",
+  "min-filter",
+  "sharpening-laplacian-filter",
 ];
 
 export type SharpeningLaplacianMaskMode =
@@ -44,42 +44,56 @@ export type SpatialFilteringItem = DefaultItemProperties & {
   type: "spatial-filtering";
 } & (
     | {
+        method:
+          | "arithmetic-mean-filter"
+          | "geometric-mean-filter"
+          | "harmonic-mean-filter"
+          | "max-filter"
+          | "median-filter"
+          | "midpoint-filter"
+          | "min-filter";
+        filterSize: number; // (filterSize x filterSize)
+      }
+    | {
+        method: "contraharmonic-mean-filter";
+        filterSize: number; // (filterSize x filterSize)
+        order: number;
+      }
+    | {
         method: "gaussian-smoothing-filter";
         filterSize: number; // (filterSize x filterSize)
         K: number;
         sigma: number; // For smoothing filter
       }
     | {
-        method:
-          | "median-filter"
-          | "min-filter"
-          | "max-filter"
-          | "midpoint-filter";
-        filterSize: number; // (filterSize x filterSize)
+        method: "high-boosting-filter";
+        blurredImage: number; // index of the blurred image
+        highBoostingK: number; // Property for high-boosting filter
       }
     | {
         method: "sharpening-laplacian-filter";
         maskMode: SharpeningLaplacianMaskMode;
         processMode: "none" | "scaled" | "sharpened";
       }
-    | {
-        method: "high-boosting-filter";
-        blurredImage: number; // index of the blurred image
-        highBoostingK: number; // Property for high-boosting filter
-      }
   );
+
+export interface SizeOnlyFilterParams {
+  source: number;
+  size: number; // Kernel size
+}
+
+export interface ContraharmonicMeanFilterParams {
+  source: number;
+  size: number; // Kernel size
+  order: number;
+}
+
 export interface GaussianSmotthingFilterParams {
   source: number;
   size: number; // Kernel size
   K?: number;
   sigma?: number;
 }
-
-export interface MedianFilterParams {
-  source: number;
-  size: number; // Kernel size
-}
-
 export interface SharpeningLaplacianFilterParams {
   source: number;
   maskMode?: SharpeningLaplacianMaskMode;

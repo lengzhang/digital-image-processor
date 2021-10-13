@@ -57,19 +57,75 @@ const useController = () => {
         return { "spatial-filter-type": "Spatial filter type is invalid." };
       }
 
-      if (method === "gaussian-smoothing-filter") {
+      if (method === "alpha-trimmed-mean-filter") {
+        /** Alpha-trimmed Mean Filter */
+        //
+      } else if (method === "arithmetic-mean-filter") {
+        /** Arithmetic Mean Filter */
+        await operations.arithmeticMeanFilter({
+          source,
+          size: parseInt(values["spatial-filter-size"]) || 3,
+        });
+      } else if (method === "contraharmonic-mean-filter") {
+        /** Contraharmonic Mean Filter */
+        await operations.contraharmonicMeanFilter({
+          source,
+          size: parseInt(values["spatial-filter-size"]) || 3,
+          order: parseInt(values["contraharmonic-mean-filter-order"]) || 1,
+        });
+      } else if (method === "gaussian-smoothing-filter") {
+        /** Gaussian Smoothing Filter */
         await operations.gaussianSmoothingFilter({
           source,
           size: parseInt(values["spatial-filter-size"]) || 3,
           K: parseFloat(values["gaussian-smoothing-filter-K"]) || 1,
           sigma: parseFloat(values["gaussian-smoothing-filter-sigma"]) || 1,
         });
+      } else if (method === "geometric-mean-filter") {
+        /** Geometric Mean Filter */
+        await operations.geometricMeanFilter({
+          source,
+          size: parseInt(values["spatial-filter-size"]) || 3,
+        });
+      } else if (method === "harmonic-mean-filter") {
+        /** Harmonic Mean Filter */
+        await operations.harmonicMeanFilter({
+          source,
+          size: parseInt(values["spatial-filter-size"]) || 3,
+        });
+      } else if (method === "high-boosting-filter") {
+        /** High-boosting Filter */
+        await operations.highBoostingFilter({
+          source,
+          blurredImage: parseInt(values["high-boosting-filter-blurred-image"]),
+          highBoostingK: parseInt(values["high-boosting-filter-k"]) || 1,
+        });
+      } else if (method === "max-filter") {
+        /** Max Filter */
+        await operations.maxFilter({
+          source,
+          size: parseInt(values["spatial-filter-size"]) || 3,
+        });
       } else if (method === "median-filter") {
+        /** Median Filter */
         await operations.medianFilter({
           source,
           size: parseInt(values["spatial-filter-size"]) || 3,
         });
+      } else if (method === "midpoint-filter") {
+        /** Midpoint Filter */
+        await operations.midpointFilter({
+          source,
+          size: parseInt(values["spatial-filter-size"]) || 3,
+        });
+      } else if (method === "min-filter") {
+        /** Min Filter */
+        await operations.minFilter({
+          source,
+          size: parseInt(values["spatial-filter-size"]) || 3,
+        });
       } else if (method === "sharpening-laplacian-filter") {
+        /** Sharpening Laplacian Filter */
         const maskMode = sharpeningLaplacianMaskMode.find(
           (m) => m === values["sharpening-laplacian-filter-mask-mode"]
         );
@@ -84,37 +140,6 @@ const useController = () => {
           processMode:
             values["sharpening-laplacian-filter-process-mode"] || "none",
         });
-      } else if (method === "high-boosting-filter") {
-        await operations.highBoostingFilter({
-          source,
-          blurredImage: parseInt(values["high-boosting-filter-blurred-image"]),
-          highBoostingK: parseInt(values["high-boosting-filter-k"]) || 1,
-        });
-      } else if (method === "arithmetic-mean-filter") {
-        //
-      } else if (method === "geometric-mean-filter") {
-        //
-      } else if (method === "harmonic-mean-filter") {
-        //
-      } else if (method === "contraharmonic-mean-filter") {
-        //
-      } else if (method === "max-filter") {
-        await operations.maxFilter({
-          source,
-          size: parseInt(values["spatial-filter-size"]) || 3,
-        });
-      } else if (method === "min-filter") {
-        await operations.minFilter({
-          source,
-          size: parseInt(values["spatial-filter-size"]) || 3,
-        });
-      } else if (method === "midpoint-filter") {
-        await operations.midpointFilter({
-          source,
-          size: parseInt(values["spatial-filter-size"]) || 3,
-        });
-      } else if (method === "alpha-trimmed-mean-filter") {
-        //
       }
     } else if (values.type === "noise-distribution") {
       const method = noiseDistributionMethods.find(
