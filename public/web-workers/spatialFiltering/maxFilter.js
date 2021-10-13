@@ -9,15 +9,14 @@ const colors = ["R", "G", "B"];
  */
 
 /**
- * Median Filter
+ * Max Filter
  * @param {Pixel[][]} matrix
  * @param {number} size   // Kernel size
  */
-const medianFilter = (matrix, size) => {
+const maxFilter = (matrix, size) => {
   const col = matrix.length;
   const row = matrix[0].length;
   const offset = Math.floor(size / 2);
-  const mid = Math.floor((size * size) / 2);
 
   const result = matrix.map((row) => row.map((pixel) => ({ ...pixel })));
 
@@ -41,9 +40,9 @@ const medianFilter = (matrix, size) => {
       }
 
       for (let color of colors) {
-        // Sort and assign the midian
+        // Sort and assign the max
         list[color].sort((a, b) => a - b);
-        result[y][x][color] = list[color][mid];
+        result[y][x][color] = list[color][list[color].length - 1];
       }
     }
   }
@@ -54,7 +53,7 @@ const medianFilter = (matrix, size) => {
 this.self.addEventListener("message", (evt) => {
   /** @type {[Pixel[][], number, number]} */
   const [matrix, size] = evt.data;
-  const result = medianFilter(matrix, size);
+  const result = maxFilter(matrix, size);
   this.self.postMessage(result);
   this.self.close();
 });

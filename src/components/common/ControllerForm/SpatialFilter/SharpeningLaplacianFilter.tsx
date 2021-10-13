@@ -7,10 +7,15 @@ import Grid from "@material-ui/core/Grid";
 import RadioField, { RadioFieldItem } from "src/components/common/RadioField";
 import SelectField from "src/components/common/SelectField";
 
-import useStyles from "../useStyles";
-import { DefaultFieldsProps, SelectionItem } from "../types";
+import { SharpeningLaplacianMaskMode } from "src/hooks/useImageItems/useSpatialFilter";
 
-const sharpeningLaplacianFilterMaskModeItems: SelectionItem[] = [
+import useStyles from "../useStyles";
+import { DefaultFieldsProps } from "../types";
+
+const sharpeningLaplacianFilterMaskModeItems: {
+  value: SharpeningLaplacianMaskMode;
+  text: string;
+}[] = [
   { value: "mask-4", text: "Mask 4" },
   { value: "mask-8", text: "Mask 8" },
   { value: "mask-4-reverse", text: "Mask 4 Reverse" },

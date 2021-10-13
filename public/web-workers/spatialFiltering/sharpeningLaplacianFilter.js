@@ -30,7 +30,7 @@ const mask8Reverse = [
 ];
 
 /**
- * Smoothing Filter
+ * Sharpening Laplacian Filter
  * @param {Pixel[][]} matrix
  * @param {number[][]} mask
  * @param {number} c

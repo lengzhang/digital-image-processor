@@ -11,20 +11,7 @@ import {
 import { noiseDistributionMethods } from "src/hooks/useImageItems/useNoiseDistribution";
 
 const useController = () => {
-  const {
-    state,
-    nearestNeighborInterpolation,
-    linearInterpolation,
-    bilinearInterpolation,
-    grayLevelResolution,
-    bitPlanesRemoving,
-    histogramEqualization,
-    gaussianSmoothingFilter,
-    medianFilter,
-    sharpeningLaplacianFilter,
-    highBoostingFilter,
-    gaussianNoiseDistribution,
-  } = useImageItems();
+  const { state, ...operations } = useImageItems();
 
   const onSubmit = async (values: Record<string, string>, formApi: FormApi) => {
     const source = parseInt(values.source);
@@ -32,29 +19,29 @@ const useController = () => {
     if (values.type === "spatial-resolution") {
       const interpolationFn =
         values.method === "nearest-neighbor-interpolation"
-          ? nearestNeighborInterpolation
+          ? operations.nearestNeighborInterpolation
           : values.method === "linear-interpolation-x"
-          ? linearInterpolation("x")
+          ? operations.linearInterpolation("x")
           : values.method === "linear-interpolation-y"
-          ? linearInterpolation("y")
-          : bilinearInterpolation;
+          ? operations.linearInterpolation("y")
+          : operations.bilinearInterpolation;
       await interpolationFn({
         source,
         width: parseInt(values.width),
         height: parseInt(values.height),
       });
     } else if (values.type === "gray-level-resolution") {
-      await grayLevelResolution({
+      await operations.grayLevelResolution({
         source,
         bit: parseInt(values.bit) as BitType,
       });
     } else if (values.type === "bit-planes-removing") {
-      await bitPlanesRemoving({
+      await operations.bitPlanesRemoving({
         source,
         bits: parseInt(values.bits),
       });
     } else if (values.type === "histogram-equalization") {
-      await histogramEqualization({
+      await operations.histogramEqualization({
         source,
         size:
           values["histogram-equalization-type"] === "local"
@@ -71,14 +58,14 @@ const useController = () => {
       }
 
       if (method === "gaussian-smoothing-filter") {
-        await gaussianSmoothingFilter({
+        await operations.gaussianSmoothingFilter({
           source,
           size: parseInt(values["spatial-filter-size"]) || 3,
           K: parseFloat(values["gaussian-smoothing-filter-K"]) || 1,
           sigma: parseFloat(values["gaussian-smoothing-filter-sigma"]) || 1,
         });
       } else if (method === "median-filter") {
-        await medianFilter({
+        await operations.medianFilter({
           source,
           size: parseInt(values["spatial-filter-size"]) || 3,
         });
@@ -91,18 +78,43 @@ const useController = () => {
             "sharpening-laplacian-filter-mask-mode": "Mask mode is invalid.",
           };
         }
-        await sharpeningLaplacianFilter({
+        await operations.sharpeningLaplacianFilter({
           source,
           maskMode,
           processMode:
             values["sharpening-laplacian-filter-process-mode"] || "none",
         });
       } else if (method === "high-boosting-filter") {
-        await highBoostingFilter({
+        await operations.highBoostingFilter({
           source,
           blurredImage: parseInt(values["high-boosting-filter-blurred-image"]),
           highBoostingK: parseInt(values["high-boosting-filter-k"]) || 1,
         });
+      } else if (method === "arithmetic-mean-filter") {
+        //
+      } else if (method === "geometric-mean-filter") {
+        //
+      } else if (method === "harmonic-mean-filter") {
+        //
+      } else if (method === "contraharmonic-mean-filter") {
+        //
+      } else if (method === "max-filter") {
+        await operations.maxFilter({
+          source,
+          size: parseInt(values["spatial-filter-size"]) || 3,
+        });
+      } else if (method === "min-filter") {
+        await operations.minFilter({
+          source,
+          size: parseInt(values["spatial-filter-size"]) || 3,
+        });
+      } else if (method === "midpoint-filter") {
+        await operations.midpointFilter({
+          source,
+          size: parseInt(values["spatial-filter-size"]) || 3,
+        });
+      } else if (method === "alpha-trimmed-mean-filter") {
+        //
       }
     } else if (values.type === "noise-distribution") {
       const method = noiseDistributionMethods.find(
@@ -113,7 +125,7 @@ const useController = () => {
         const mean = parseInt(values["noise-distribution-gaussian-mean"]);
         const sigma = parseFloat(values["noise-distribution-gaussian-sigma"]);
         const k = parseFloat(values["noise-distribution-gaussian-k"]);
-        await gaussianNoiseDistribution({ source, mean, sigma, k });
+        await operations.gaussianNoiseDistribution({ source, mean, sigma, k });
       }
     }
     scrollToBottom();

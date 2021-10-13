@@ -9,6 +9,10 @@ const SHARPENING_LAPLACIAN_FILTER_WORKER =
   "/web-workers/spatialFiltering/sharpeningLaplacianFilter.js";
 const HIGH_BOOSTING_FILTER_WORKER =
   "/web-workers/spatialFiltering/highBoostingFilter.js";
+const MIN_FILTER_WORKER = "/web-workers/spatialFiltering/minFilter.js";
+const MAX_FILTER_WORKER = "/web-workers/spatialFiltering/maxFilter.js";
+const MIDPOINT_FILTER_WORKER =
+  "/web-workers/spatialFiltering/midpointFilter.js";
 
 export const gaussianSmoothingFilter = async (
   matrix: Pixel[][],
@@ -29,6 +33,25 @@ export const gaussianSmoothingFilter = async (
 export const medianFilter = async (matrix: Pixel[][], size: number) => {
   const result = await runImageProcessWorker(
     MEDIAN_FILTER_WORKER,
+    matrix,
+    size
+  );
+  return result;
+};
+
+export const minFilter = async (matrix: Pixel[][], size: number) => {
+  const result = await runImageProcessWorker(MIN_FILTER_WORKER, matrix, size);
+  return result;
+};
+
+export const maxFilter = async (matrix: Pixel[][], size: number) => {
+  const result = await runImageProcessWorker(MAX_FILTER_WORKER, matrix, size);
+  return result;
+};
+
+export const midpointFilter = async (matrix: Pixel[][], size: number) => {
+  const result = await runImageProcessWorker(
+    MIDPOINT_FILTER_WORKER,
     matrix,
     size
   );

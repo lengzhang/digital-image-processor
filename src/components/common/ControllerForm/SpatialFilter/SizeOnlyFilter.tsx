@@ -18,7 +18,7 @@ const kernelSizeValidation: FieldValidator<string> = (value, _, meta) => {
   }
 };
 
-const MedianFilter: React.FC<DefaultFieldsProps> = ({ disabled }) => {
+const SizeOnlyFilter: React.FC<DefaultFieldsProps> = ({ disabled }) => {
   const classes = useStyles();
 
   return (
@@ -41,4 +41,4 @@ const MedianFilter: React.FC<DefaultFieldsProps> = ({ disabled }) => {
   );
 };
 
-export default React.memo(MedianFilter);
+export default React.memo(SizeOnlyFilter);

@@ -51,7 +51,7 @@ const generateGaussianTemplate = (size, K, sigma) => {
 };
 
 /**
- * Smoothing Filter
+ * Gaussian Smoothing Filter
  * @param {Pixel[][]} matrix
  * @param {number[][]} mask
  * @param {number} maskSum

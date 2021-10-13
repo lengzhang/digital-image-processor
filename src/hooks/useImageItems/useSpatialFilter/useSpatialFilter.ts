@@ -234,11 +234,137 @@ const useSpatialFilter = (
     [state.items, dispatch, pushMessage]
   );
 
+  const minFilter = useCallback(
+    async ({ source, size }: MedianFilterParams) => {
+      dispatch({ type: "set-status", status: "spatial-filtering" });
+      try {
+        const items = state.items;
+        if (source < 0 || source >= items.length) {
+          throw new Error("source index is out of range");
+        }
+
+        const sourceItem = items[source];
+        const matrix = await spatialFilterOperations.minFilter(
+          sourceItem.matrix,
+          size
+        );
+        dispatch({
+          type: "push-item",
+          item: {
+            type: "spatial-filtering",
+            method: "min-filter",
+            matrix,
+            source,
+            bit: sourceItem.bit,
+            isGrayScaled: sourceItem.isGrayScaled,
+            filterSize: size,
+          },
+        });
+        pushMessage({
+          message: "Calculating min filtering succeeded",
+          severity: "success",
+        });
+      } catch (error: any) {
+        dispatch({
+          type: "set-error",
+          error: error?.message ?? "Calculating min filtering failed",
+        });
+      }
+      dispatch({ type: "set-status", status: "idle" });
+    },
+    [state.items, dispatch, pushMessage]
+  );
+
+  const maxFilter = useCallback(
+    async ({ source, size }: MedianFilterParams) => {
+      dispatch({ type: "set-status", status: "spatial-filtering" });
+      try {
+        const items = state.items;
+        if (source < 0 || source >= items.length) {
+          throw new Error("source index is out of range");
+        }
+
+        const sourceItem = items[source];
+        const matrix = await spatialFilterOperations.maxFilter(
+          sourceItem.matrix,
+          size
+        );
+        dispatch({
+          type: "push-item",
+          item: {
+            type: "spatial-filtering",
+            method: "max-filter",
+            matrix,
+            source,
+            bit: sourceItem.bit,
+            isGrayScaled: sourceItem.isGrayScaled,
+            filterSize: size,
+          },
+        });
+        pushMessage({
+          message: "Calculating max filtering succeeded",
+          severity: "success",
+        });
+      } catch (error: any) {
+        dispatch({
+          type: "set-error",
+          error: error?.message ?? "Calculating max filtering failed",
+        });
+      }
+      dispatch({ type: "set-status", status: "idle" });
+    },
+    [state.items, dispatch, pushMessage]
+  );
+
+  const midpointFilter = useCallback(
+    async ({ source, size }: MedianFilterParams) => {
+      dispatch({ type: "set-status", status: "spatial-filtering" });
+      try {
+        const items = state.items;
+        if (source < 0 || source >= items.length) {
+          throw new Error("source index is out of range");
+        }
+
+        const sourceItem = items[source];
+        const matrix = await spatialFilterOperations.midpointFilter(
+          sourceItem.matrix,
+          size
+        );
+        dispatch({
+          type: "push-item",
+          item: {
+            type: "spatial-filtering",
+            method: "midpoint-filter",
+            matrix,
+            source,
+            bit: sourceItem.bit,
+            isGrayScaled: sourceItem.isGrayScaled,
+            filterSize: size,
+          },
+        });
+        pushMessage({
+          message: "Calculating midpoint filtering succeeded",
+          severity: "success",
+        });
+      } catch (error: any) {
+        dispatch({
+          type: "set-error",
+          error: error?.message ?? "Calculating midpoint filtering failed",
+        });
+      }
+      dispatch({ type: "set-status", status: "idle" });
+    },
+    [state.items, dispatch, pushMessage]
+  );
+
   return {
     gaussianSmoothingFilter,
     medianFilter,
     sharpeningLaplacianFilter,
     highBoostingFilter,
+    minFilter,
+    maxFilter,
+    midpointFilter,
   };
 };
 

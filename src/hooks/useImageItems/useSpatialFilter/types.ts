@@ -4,12 +4,28 @@ export type SpatialFilteringMethodType =
   | "gaussian-smoothing-filter"
   | "median-filter"
   | "sharpening-laplacian-filter"
-  | "high-boosting-filter";
+  | "high-boosting-filter"
+  | "arithmetic-mean-filter"
+  | "geometric-mean-filter"
+  | "harmonic-mean-filter"
+  | "contraharmonic-mean-filter"
+  | "max-filter"
+  | "min-filter"
+  | "midpoint-filter"
+  | "alpha-trimmed-mean-filter";
 export const spatialFilteringMethodType: SpatialFilteringMethodType[] = [
   "gaussian-smoothing-filter",
   "median-filter",
   "sharpening-laplacian-filter",
   "high-boosting-filter",
+  "arithmetic-mean-filter",
+  "geometric-mean-filter",
+  "harmonic-mean-filter",
+  "contraharmonic-mean-filter",
+  "max-filter",
+  "min-filter",
+  "midpoint-filter",
+  "alpha-trimmed-mean-filter",
 ];
 
 export type SharpeningLaplacianMaskMode =
@@ -34,7 +50,11 @@ export type SpatialFilteringItem = DefaultItemProperties & {
         sigma: number; // For smoothing filter
       }
     | {
-        method: "median-filter";
+        method:
+          | "median-filter"
+          | "min-filter"
+          | "max-filter"
+          | "midpoint-filter";
         filterSize: number; // (filterSize x filterSize)
       }
     | {
