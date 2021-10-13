@@ -20,6 +20,7 @@ export interface DefaultItemProperties {
 /** Original */
 export interface OriginalItem extends DefaultItemProperties {
   type: "original";
+  filename: string;
 }
 
 /** Spatial Resolution */

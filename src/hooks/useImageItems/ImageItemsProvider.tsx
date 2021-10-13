@@ -93,6 +93,7 @@ const ImageItemsProvider: React.FC = ({ children }) => {
         source: null,
         bit: 8,
         isGrayScaled,
+        filename: file.name,
       };
       dispatch({ type: "push-item", item });
       pushMessage({ message: "Added original image", severity: "success" });

@@ -80,17 +80,21 @@ const useImageBlock = ({ index, item }: UseImageBlockProps) => {
     return newList;
   }, [index, item, source]);
 
-  const title = useMemo(
-    () =>
-      (index === 0 ? "" : `[${index}] `) +
-      removeDashAndUppercaseFirstLetter(item.type) +
-      (item.type === "spatial-resolution"
-        ? `: ${removeDashAndUppercaseFirstLetter(item.method)}`
-        : ""),
-    [index, item]
-  );
+  const [title, subtitle] = useMemo(() => {
+    if (item.type === "original") {
+      return [removeDashAndUppercaseFirstLetter(item.type), item.filename];
+    }
 
-  return { histogram, list, title, showHistogram, onClickHistogram };
+    const method =
+      "method" in item ? removeDashAndUppercaseFirstLetter(item.method) : "";
+
+    return [
+      `[${index}] ${removeDashAndUppercaseFirstLetter(item.type)}`,
+      method,
+    ];
+  }, [index, item]);
+
+  return { histogram, list, title, subtitle, showHistogram, onClickHistogram };
 };
 
 export default useImageBlock;

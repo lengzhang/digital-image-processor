@@ -23,7 +23,7 @@ interface ImageBlockProps {
 }
 
 const ImageBlock: React.FC<ImageBlockProps> = ({ index, item }) => {
-  const { histogram, list, title, showHistogram, onClickHistogram } =
+  const { histogram, list, title, subtitle, showHistogram, onClickHistogram } =
     useImageBlock({
       index,
       item,
@@ -36,6 +36,9 @@ const ImageBlock: React.FC<ImageBlockProps> = ({ index, item }) => {
           <Grid container spacing={1} direction="column">
             <Grid item>
               <Typography variant="h6">{title}</Typography>
+              {subtitle && (
+                <Typography variant="subtitle2">{subtitle}</Typography>
+              )}
             </Grid>
             <Grid item>
               <Button
