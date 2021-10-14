@@ -22,6 +22,7 @@ import {
   HistogramEqualizationParams,
   BitPlanesRemovingParams,
 } from "./types";
+import useOperations from "./useOperations";
 
 const initialState: ImageItemsState = {
   status: "idle",
@@ -66,6 +67,7 @@ const ImageItemsProvider: React.FC = ({ children }) => {
   const spatialResolution = useSpatialResolution(state, dispatch);
   const spatialFilter = useSpatialFilter(state, dispatch);
   const noiseDistribution = useNoiseDistribution(state, dispatch);
+  const operations = useOperations(state, dispatch);
 
   useEffect(() => {
     if (!!state.error) {
@@ -241,6 +243,7 @@ const ImageItemsProvider: React.FC = ({ children }) => {
         /** Spatial Filter */
         ...spatialFilter,
         ...noiseDistribution,
+        ...operations,
       }}
     >
       {children}

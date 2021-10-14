@@ -156,6 +156,34 @@ const useController = () => {
         const k = parseFloat(values["noise-distribution-gaussian-k"]);
         await operations.gaussianNoiseDistribution({ source, mean, sigma, k });
       }
+    } else if (values.type === "operation") {
+      const method = values?.["operations-method"];
+
+      if (method === "addition") {
+        const addend = parseInt(values["operations-addend"]);
+
+        console.log(values, addend, state.items);
+        if (
+          Number.isNaN(addend) ||
+          addend < 0 ||
+          addend >= state.items.length
+        ) {
+          return { "operations-addend": "Addend is invalid." };
+        }
+        await operations.addition({ source, addend });
+      } else if (method === "subtraction") {
+        const minuend = parseInt(values["operations-minuend"]);
+        if (
+          Number.isNaN(minuend) ||
+          minuend < 0 ||
+          minuend >= state.items.length
+        ) {
+          return { "operations-minuend": "Minuend is invalid." };
+        }
+        await operations.subtraction({ source, minuend });
+      } else if (method === "scaling") {
+        await operations.scaling({ source });
+      }
     }
     scrollToBottom();
   };

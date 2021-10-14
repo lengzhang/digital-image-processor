@@ -10,6 +10,7 @@ import BitsCheckboxField from "src/components/common/BitsCheckboxField";
 import SpatialResolution from "./SpatialResolution";
 import GrayLevelResolution from "./GrayLevelResolution";
 import HistogramEqualization from "./HistogramEqualization";
+import Operations from "./Operations";
 import SpatialFilter from "./SpatialFilter";
 
 import useStyles from "./useStyles";
@@ -24,6 +25,7 @@ const resolutionItems: SelectionItem[] = [
   { value: "spatial-filter", text: "Spatial Filter" },
   { value: "bit-planes-removing", text: "Bit Planes Removing" },
   { value: "noise-distribution", text: "Noise Distribution" },
+  { value: "operation", text: "Operation" },
 ];
 
 const ControllerForm: React.FC<ControllerFormProps> = ({ disabled }) => {
@@ -32,16 +34,10 @@ const ControllerForm: React.FC<ControllerFormProps> = ({ disabled }) => {
   const values = useFormState().values;
 
   const fields = useMemo(() => {
-    switch (
-      values?.type as
-        | undefined
-        | "spatial-resolution"
-        | "gray-level-resolution"
-        | "histogram-equalization"
-        | "spatial-filter"
-        | "bit-planes-removing"
-        | "noise-distribution"
-    ) {
+    const item =
+      resolutionItems.find(({ value }) => value === values?.type) ?? null;
+
+    switch (item?.value) {
       case "spatial-resolution":
         return <SpatialResolution disabled={disabled} />;
       case "gray-level-resolution":
@@ -64,6 +60,8 @@ const ControllerForm: React.FC<ControllerFormProps> = ({ disabled }) => {
         );
       case "noise-distribution":
         return <NoiseDistribution disabled={disabled} />;
+      case "operation":
+        return <Operations disabled={disabled} />;
     }
     return null;
   }, [values?.type, disabled]);

@@ -9,6 +9,7 @@ import useSpatialFilter, { SpatialFilteringItem } from "./useSpatialFilter";
 import useNoiseDistribution, {
   NoiseDistributionItem,
 } from "./useNoiseDistribution";
+import useOperations, { OperationItem } from "./useOperations";
 
 export interface DefaultItemProperties {
   matrix: Pixel[][];
@@ -56,7 +57,8 @@ type ImageItemsStatus =
   | "histogram-equalization"
   | SpatialFilteringItem["type"]
   // | "spatial-filtering"
-  | NoiseDistributionItem["method"];
+  | NoiseDistributionItem["method"]
+  | OperationItem["method"];
 
 export type ImageItem =
   | OriginalItem
@@ -65,7 +67,8 @@ export type ImageItem =
   | BitPlanesRemovingItem
   | HistogramEqualizationItem
   | SpatialFilteringItem
-  | NoiseDistributionItem;
+  | NoiseDistributionItem
+  | OperationItem;
 
 export interface ImageItemsState {
   status: ImageItemsStatus;
@@ -102,7 +105,8 @@ export interface HistogramEqualizationParams {
 export interface ImageItemsContext
   extends ReturnType<typeof useSpatialResolution>,
     ReturnType<typeof useSpatialFilter>,
-    ReturnType<typeof useNoiseDistribution> {
+    ReturnType<typeof useNoiseDistribution>,
+    ReturnType<typeof useOperations> {
   state: ImageItemsState;
   initialize: () => void;
   popItem: () => void;

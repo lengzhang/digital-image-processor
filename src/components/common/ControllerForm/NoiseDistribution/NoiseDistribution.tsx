@@ -50,7 +50,7 @@ const NoiseDistribution: React.FC<DefaultFieldsProps> = ({ disabled }) => {
           component={SelectField}
           items={noiseDistributionMethodItems}
           textFieldProps={{
-            className: classes.textField,
+            className: classes.selectField,
             disabled,
             label: "Type",
             variant: "outlined",

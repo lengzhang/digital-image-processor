@@ -59,6 +59,19 @@ const Image: React.FC<{
       {imageItem.type === "spatial-filtering" && (
         <SpatialFilterDetails item={imageItem} />
       )}
+      {imageItem.type === "operation" &&
+        (("addend" in imageItem && (
+          <Typography display="block" noWrap>
+            Addend:{" "}
+            {imageItem.addend === 0 ? "Original" : `[${imageItem.addend}]`}
+          </Typography>
+        )) ||
+          ("minuend" in imageItem && (
+            <Typography display="block" noWrap>
+              Minuend:{" "}
+              {imageItem.minuend === 0 ? "Original" : `[${imageItem.minuend}]`}
+            </Typography>
+          )))}
       {showHistogram && <Box marginTop="auto">{histograms}</Box>}
     </Box>
   );
