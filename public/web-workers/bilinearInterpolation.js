@@ -17,7 +17,7 @@ const getClip = (x, min, max) => (x < min ? min : max < x ? max : x);
  */
 
 /** @type {keyof Pixel} */
-const keys = ["R", "G", "B", "A"];
+const colors = ["R", "G", "B", "A"];
 
 /**
  * Bilinear Interpolation
@@ -98,17 +98,17 @@ const bilinearInterpolation = (matrix, destWidth, destHeight) => {
       const Q22 = matrix[y2][x2];
       const Q12 = matrix[y2][x1];
 
-      keys.forEach(
+      colors.forEach(
         /**
-         * @param {keyof Pixel} key
+         * @param {keyof Pixel} color
          */
-        (key) => {
-          result[y][x][key] = getClip(
+        (color) => {
+          result[y][x][color] = getClip(
             Math.round(
-              coffiecent1 * Q11[key] +
-                coffiecent2 * Q21[key] +
-                coffiecent3 * Q22[key] +
-                coffiecent4 * Q12[key]
+              coffiecent1 * Q11[color] +
+                coffiecent2 * Q21[color] +
+                coffiecent3 * Q22[color] +
+                coffiecent4 * Q12[color]
             ),
             0,
             255

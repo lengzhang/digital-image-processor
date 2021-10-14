@@ -1,3 +1,12 @@
+/**
+ * @typedef Pixel
+ * @property {number} R
+ * @property {number} G
+ * @property {number} B
+ * @property {number} A
+ */
+
+/** @type {keyof Pixel} */
 const colors = ["R", "G", "B"];
 
 /**

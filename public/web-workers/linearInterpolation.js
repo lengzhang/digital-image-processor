@@ -16,7 +16,7 @@ const getClip = (x, min, max) => (x < min ? min : max < x ? max : x);
  */
 
 /** @type {keyof Pixel} */
-const keys = ["R", "G", "B", "A"];
+const colors = ["R", "G", "B", "A"];
 
 /**
  * Calculate target pixel in x coordinate
@@ -37,15 +37,15 @@ const xCoorCalculation = (matrix, target, i, j, srcX, srcWidth) => {
   /**
    * p = p0 + (x - x0) * (p1 - p0) / (x1 - x0)
    */
-  keys.forEach(
+  colors.forEach(
     /**
-     * @param {keyof Pixel} key
+     * @param {keyof Pixel} color
      */
-    (key) => {
+    (color) => {
       const p = Math.round(
-        p0[key] + ((srcX - x0) * (p1[key] - p0[key])) / (x1 - x0)
+        p0[color] + ((srcX - x0) * (p1[color] - p0[color])) / (x1 - x0)
       );
-      target[key] = getClip(p, 0, 255);
+      target[color] = getClip(p, 0, 255);
     }
   );
 };
@@ -69,15 +69,15 @@ const yCoorCalculation = (matrix, target, i, j, srcY, srcHeight) => {
   /**
    * p = p0 + (y - y0) * (p1 - p0) / (y1 - y0)
    */
-  keys.forEach(
+  colors.forEach(
     /**
-     * @param {keyof Pixel} key
+     * @param {keyof Pixel} color
      */
-    (key) => {
+    (color) => {
       const p = Math.round(
-        p0[key] + ((srcY - y0) * (p1[key] - p0[key])) / (y1 - y0)
+        p0[color] + ((srcY - y0) * (p1[color] - p0[color])) / (y1 - y0)
       );
-      target[key] = getClip(p, 0, 255);
+      target[color] = getClip(p, 0, 255);
     }
   );
 };

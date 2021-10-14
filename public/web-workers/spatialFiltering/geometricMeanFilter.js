@@ -1,4 +1,3 @@
-const colors = ["R", "G", "B"];
 /**
  * @typedef Pixel
  * @property {number} R
@@ -6,6 +5,9 @@ const colors = ["R", "G", "B"];
  * @property {number} B
  * @property {number} A
  */
+
+/** @type {keyof Pixel} */
+const colors = ["R", "G", "B"];
 
 /**
  * Geometric Mean Filter

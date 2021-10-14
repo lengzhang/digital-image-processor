@@ -1,4 +1,15 @@
 /**
+ * @typedef Pixel
+ * @property {number} R
+ * @property {number} G
+ * @property {number} B
+ * @property {number} A
+ */
+
+/** @type {keyof Pixel} */
+const colors = ["R", "G", "B"];
+
+/**
  * Bit Planes Removing
  * @param {Pixel[][]} matrix
  * @param {number} bits
@@ -14,22 +25,23 @@ const bitPlanesRemoving = (matrix, bits) => {
     }, []);
 
   return matrix.map((row) =>
-    row.map(({ R, G, B, A }) => {
-      const newPixel = { R: 0, G: 0, B: 0, A };
+    row.map((pixel) => {
+      const newPixel = { R: 0, G: 0, B: 0, A: pixel.A };
       if (bitList.length === 0) return newPixel;
 
       if (bitList.length === 1) {
         const n = bitList[0];
         const bit = Math.pow(2, n - 1);
-        newPixel.R = calculateBitPlane(R, bit);
-        newPixel.G = calculateBitPlane(G, bit);
-        newPixel.B = calculateBitPlane(B, bit);
+
+        for (let color of colors) {
+          newPixel[color] = calculateBitPlane(pixel[color], bit);
+        }
       } else if (bitList.length > 1) {
         for (let n of bitList) {
           const bit = Math.pow(2, n - 1);
-          newPixel.R += calculateBitPlane(R, bit, bit);
-          newPixel.G += calculateBitPlane(G, bit, bit);
-          newPixel.B += calculateBitPlane(B, bit, bit);
+          for (let color of colors) {
+            newPixel[color] = calculateBitPlane(pixel[color], bit, bit);
+          }
         }
       }
 
