@@ -11,14 +11,15 @@ import {
   SpatialFilteringMethodType,
 } from "src/hooks/useImageItems/useSpatialFilter";
 
+import AlphaTrimmedMeanFilter from "./AlphaTrimmedMeanFilter";
 import GaussianSmoothingFilter from "./GaussianSmoothingFilter";
+import ContraharmonicMeanFilter from "./ContraharmonicMeanFilter";
+import HighBoostingFilter from "./HighBoostingFilter";
 import SizeOnlyFilter from "./SizeOnlyFilter";
 import SharpeningLaplacianFilter from "./SharpeningLaplacianFilter";
-import HighBoostingFilter from "./HighBoostingFilter";
 
 import { DefaultFieldsProps } from "../types";
 import useStyles from "../useStyles";
-import ContraharmonicMeanFilter from "./ContraharmonicMeanFilter";
 
 const spatialFilterMethodItems: {
   value: SpatialFilteringMethodType;
@@ -56,6 +57,8 @@ const SpatialFilter: React.FC<DefaultFieldsProps> = ({ disabled }) => {
       case "max-filter":
       case "midpoint-filter":
         return <SizeOnlyFilter disabled={disabled} />;
+      case "alpha-trimmed-mean-filter":
+        return <AlphaTrimmedMeanFilter disabled={disabled} />;
       case "contraharmonic-mean-filter":
         return <ContraharmonicMeanFilter disabled={disabled} />;
       case "gaussian-smoothing-filter":
@@ -77,7 +80,7 @@ const SpatialFilter: React.FC<DefaultFieldsProps> = ({ disabled }) => {
           component={SelectField}
           items={spatialFilterMethodItems}
           textFieldProps={{
-            className: classes.textField,
+            className: classes.selectField,
             disabled,
             label: "Type",
             variant: "outlined",

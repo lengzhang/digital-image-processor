@@ -6,6 +6,7 @@ import { ImageItemsDispatch, ImageItemsState } from "../types";
 
 import {
   SizeOnlyFilterParams,
+  AlphaTrimmedMeanFilter,
   ContraharmonicMeanFilterParams,
   GaussianSmotthingFilterParams,
   HighBoostingFilterParams,
@@ -17,6 +18,50 @@ const useSpatialFilter = (
   dispatch: ImageItemsDispatch
 ) => {
   const { pushMessage } = useMessages();
+
+  const alphaTrimmedMeanFilter = useCallback(
+    async ({ source, size, d }: AlphaTrimmedMeanFilter) => {
+      dispatch({ type: "set-status", status: "spatial-filtering" });
+      try {
+        const items = state.items;
+        if (source < 0 || source >= items.length) {
+          throw new Error("source index is out of range");
+        }
+
+        const sourceItem = items[source];
+        const matrix = await spatialFilterOperations.alphaTrimmedMeanFilter(
+          sourceItem.matrix,
+          size,
+          d
+        );
+        dispatch({
+          type: "push-item",
+          item: {
+            type: "spatial-filtering",
+            method: "alpha-trimmed-mean-filter",
+            matrix,
+            source,
+            bit: sourceItem.bit,
+            isGrayScaled: sourceItem.isGrayScaled,
+            filterSize: size,
+            d,
+          },
+        });
+        pushMessage({
+          message: "Calculating alpha-trimmed mean filtering succeeded",
+          severity: "success",
+        });
+      } catch (error: any) {
+        dispatch({
+          type: "set-error",
+          error:
+            error?.message ?? "Calculating alpha-trimmed mean filtering failed",
+        });
+      }
+      dispatch({ type: "set-status", status: "idle" });
+    },
+    [state.items, dispatch, pushMessage]
+  );
 
   const arithmeticMeanFilter = useCallback(
     async ({ source, size }: SizeOnlyFilterParams) => {
@@ -529,6 +574,7 @@ const useSpatialFilter = (
   );
 
   return {
+    alphaTrimmedMeanFilter,
     arithmeticMeanFilter,
     contraharmonicMeanFilter,
     gaussianSmoothingFilter,

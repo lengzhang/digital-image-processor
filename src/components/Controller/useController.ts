@@ -59,7 +59,11 @@ const useController = () => {
 
       if (method === "alpha-trimmed-mean-filter") {
         /** Alpha-trimmed Mean Filter */
-        //
+        await operations.alphaTrimmedMeanFilter({
+          source,
+          size: parseInt(values["spatial-filter-size"]) || 3,
+          d: parseInt(values["alpha-trimmed-mean-filter-d"]) || 0,
+        });
       } else if (method === "arithmetic-mean-filter") {
         /** Arithmetic Mean Filter */
         await operations.arithmeticMeanFilter({

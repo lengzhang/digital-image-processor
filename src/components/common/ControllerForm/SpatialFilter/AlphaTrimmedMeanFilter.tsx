@@ -17,16 +17,16 @@ const kernelSizeValidation: FieldValidator<string> = (value, _, meta) => {
       return "Kernel size must be positive odd integer.";
   }
 };
-const orderValidation: FieldValidator<string> = (value, _, meta) => {
+const dValidation: FieldValidator<string> = (value, allValues, meta) => {
   if (meta?.dirty) {
     const num = parseFloat(value);
-    if (Number.isNaN(num)) return "Q must be a number.";
+    if (num < 0 || !Number.isInteger(num)) {
+      return "d must be a positive integer.";
+    }
   }
 };
 
-const ContraharmonicMeanFilter: React.FC<DefaultFieldsProps> = ({
-  disabled,
-}) => {
+const AlphaTrimmedMeanFilter: React.FC<DefaultFieldsProps> = ({ disabled }) => {
   const classes = useStyles();
 
   return (
@@ -50,21 +50,21 @@ const ContraharmonicMeanFilter: React.FC<DefaultFieldsProps> = ({
       <Grid item>
         <Field
           allowNull
-          name="contraharmonic-mean-filter-order"
+          name="alpha-trimmed-mean-filter-d"
           component={InputField}
           textFieldProps={{
             className: classes.textField,
             disabled,
-            label: "Q",
+            label: "d",
             required: true,
             size: "small",
-            type: "text",
+            type: "number",
           }}
-          validate={orderValidation}
+          validate={dValidation}
         />
       </Grid>
     </>
   );
 };
 
-export default ContraharmonicMeanFilter;
+export default AlphaTrimmedMeanFilter;

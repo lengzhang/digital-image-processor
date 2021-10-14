@@ -23,6 +23,7 @@ const SpatialFilterDetails: React.FC<{ item: SpatialFilteringItem }> = ({
       {"filterSize" in item && (
         <Text label="Filter Kernel Size" value={item.filterSize} />
       )}
+      {"d" in item && <Text label="d" value={item.d} />}
       {"order" in item && <Text label="Q" value={item.order} />}
       {"K" in item && <Text label="K" value={item.K} />}
       {"sigma" in item && <Text label="σ (Sigma)" value={item.sigma} />}

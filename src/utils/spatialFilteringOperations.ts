@@ -2,6 +2,8 @@ import { SharpeningLaplacianMaskMode } from "src/hooks/useImageItems/useSpatialF
 import { Pixel } from "./imageDataUtils";
 import runImageProcessWorker from "./runImageProcessWorker";
 
+const ALPHA_TRIMMED_MEAN_FILTER =
+  "/web-workers/spatialFiltering/alphaTrimmedMeanFilter.js";
 const ARITHMETIC_MEAN_FILTER_WORKER =
   "/web-workers/spatialFiltering/arithmeticMeanFilter.js";
 const CONTRAHARMONIC_MEAN_FILTER_WORKER =
@@ -21,6 +23,20 @@ const MIDPOINT_FILTER_WORKER =
   "/web-workers/spatialFiltering/midpointFilter.js";
 const SHARPENING_LAPLACIAN_FILTER_WORKER =
   "/web-workers/spatialFiltering/sharpeningLaplacianFilter.js";
+
+export const alphaTrimmedMeanFilter = async (
+  matrix: Pixel[][],
+  size: number,
+  d: number
+) => {
+  const result = await runImageProcessWorker(
+    ALPHA_TRIMMED_MEAN_FILTER,
+    matrix,
+    size,
+    d
+  );
+  return result;
+};
 
 export const arithmeticMeanFilter = async (matrix: Pixel[][], size: number) => {
   const result = await runImageProcessWorker(

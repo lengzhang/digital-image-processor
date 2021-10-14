@@ -55,6 +55,11 @@ export type SpatialFilteringItem = DefaultItemProperties & {
         filterSize: number; // (filterSize x filterSize)
       }
     | {
+        method: "alpha-trimmed-mean-filter";
+        filterSize: number; // (filterSize x filterSize)
+        d: number;
+      }
+    | {
         method: "contraharmonic-mean-filter";
         filterSize: number; // (filterSize x filterSize)
         order: number;
@@ -80,6 +85,12 @@ export type SpatialFilteringItem = DefaultItemProperties & {
 export interface SizeOnlyFilterParams {
   source: number;
   size: number; // Kernel size
+}
+
+export interface AlphaTrimmedMeanFilter {
+  source: number;
+  size: number; // Kernel size
+  d: number;
 }
 
 export interface ContraharmonicMeanFilterParams {
