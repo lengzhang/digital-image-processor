@@ -1,84 +1,41 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 
 import useImageItems, { ImageItem } from "src/hooks/useImageItems";
 
 import { removeDashAndUppercaseFirstLetter } from "src/utils";
-import { Pixel } from "src/utils/imageDataUtils";
-
-const colors: ("R" | "G" | "B")[] = ["R", "G", "B"];
 
 interface UseImageBlockProps {
   index: number;
   item: ImageItem;
 }
 
-interface Item {
-  text: string;
-  matrix: Pixel[][];
-  imageItem: ImageItem;
-}
-
-interface Histogram {
-  R: number[];
-  G: number[];
-  B: number[];
-}
-
 const useImageBlock = ({ index, item }: UseImageBlockProps) => {
   const { state } = useImageItems();
 
+  const [showSource, setShowSource] = useState(true);
   const [showHistogram, setShowHistogram] = useState(false);
 
-  const [histogram, setHistogram] = useState<Histogram | null>(null);
-
-  useEffect(() => {
-    const he = item.matrix.reduce<Histogram>(
-      (acc, row) => {
-        for (let pixel of row) {
-          for (let color of colors) {
-            if (0 <= pixel[color] || pixel[color] <= 255) {
-              acc[color][pixel[color]]++;
-            }
-          }
-        }
-        return acc;
-      },
-      {
-        R: Array.from<number>({ length: 255 }).fill(0),
-        G: Array.from<number>({ length: 255 }).fill(0),
-        B: Array.from<number>({ length: 255 }).fill(0),
-      }
-    );
-    setHistogram(he);
-  }, [item.matrix]);
+  const onClickSource = useCallback(() => {
+    setShowSource(!showSource);
+  }, [showSource]);
 
   const onClickHistogram = useCallback(() => {
     setShowHistogram(!showHistogram);
   }, [showHistogram]);
 
-  const source = useMemo(
-    () => state.items.find((_, i) => i === item.source),
-    [state.items, item.source]
-  );
+  const [source, sourceTitle] = useMemo(() => {
+    const s = state.items.find((_, i) => i === item.source) ?? null;
+    if (s === null) return [null, ""];
+    const m = s.matrix.length;
+    const n = s.matrix[0].length;
+    return [s, `Source[${item.source}] (${m} x ${n})`];
+  }, [state.items, item.source]);
 
-  const list = useMemo(() => {
-    const newList: Item[] = [];
-    if (!!source) {
-      newList.push({
-        text: `Source[${item.source}] (${source.matrix[0].length} x ${source.matrix.length})`,
-        matrix: source.matrix,
-        imageItem: source,
-      });
-    }
-    newList.push({
-      text: `${index === 0 ? "" : "Result"} (${item.matrix[0].length} x ${
-        item.matrix.length
-      })`,
-      matrix: item.matrix,
-      imageItem: item,
-    });
-    return newList;
-  }, [index, item, source]);
+  const resultTitle = useMemo(() => {
+    const m = item.matrix.length;
+    const n = item.matrix[0].length;
+    return `${index === 0 ? "" : "Result"} (${m} x ${n})`;
+  }, [index, item]);
 
   const [title, subtitle] = useMemo(() => {
     if (item.type === "original") {
@@ -94,7 +51,17 @@ const useImageBlock = ({ index, item }: UseImageBlockProps) => {
     ];
   }, [index, item]);
 
-  return { histogram, list, title, subtitle, showHistogram, onClickHistogram };
+  return {
+    title,
+    subtitle,
+    showSource,
+    onClickSource,
+    showHistogram,
+    onClickHistogram,
+    resultTitle,
+    sourceTitle,
+    source,
+  };
 };
 
 export default useImageBlock;
