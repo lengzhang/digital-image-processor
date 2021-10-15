@@ -18,7 +18,6 @@ const arithmeticMeanFilter = (matrix, size) => {
   const col = matrix.length;
   const row = matrix[0].length;
   const offset = Math.floor(size / 2);
-  const numberOfPixels = size * size;
 
   const result = matrix.map((row) => row.map((pixel) => ({ ...pixel })));
 
@@ -27,7 +26,7 @@ const arithmeticMeanFilter = (matrix, size) => {
    */
   for (let y = 0; y < col; y++) {
     for (let x = 0; x < row; x++) {
-      const sums = { R: 0, G: 0, B: 0 };
+      const list = { R: [], G: [], B: [] };
       /**
        * Loop for the mask
        * get the number of pixels of each level value
@@ -38,15 +37,18 @@ const arithmeticMeanFilter = (matrix, size) => {
           const s = x - offset + i;
           for (let color of colors) {
             // sum += pixel
-            sums[color] += matrix?.[t]?.[s]?.[color] ?? 0;
+            const tmp = matrix?.[t]?.[s]?.[color] ?? 0;
+            list[color].push(tmp);
           }
         }
       }
 
       for (let color of colors) {
         // Calculate arithmetic mean
-        // a = sum / (m * n)
-        result[y][x][color] = Math.round(sums[color] / numberOfPixels);
+        // result = sum / n
+        const n = list[color].length;
+        const sum = list[color].reduce((s, v) => s + v, 0);
+        result[y][x][color] = Math.round(sum / n);
       }
     }
   }

@@ -27,10 +27,7 @@ const contraharmonicMeanFilter = (matrix, size, order) => {
    */
   for (let y = 0; y < col; y++) {
     for (let x = 0; x < row; x++) {
-      // a += x^(order + 1)
-      const a = { R: 0, G: 0, B: 0 };
-      // b += x^order
-      const b = { R: 0, G: 0, B: 0 };
+      const list = { R: [], G: [], B: [] };
       /**
        * Loop for the mask
        * get the number of pixels of each level value
@@ -40,17 +37,24 @@ const contraharmonicMeanFilter = (matrix, size, order) => {
         for (let i = 0; i < size; i++) {
           const s = x - offset + i;
           for (let color of colors) {
-            const pixel = matrix?.[t]?.[s]?.[color] ?? 0;
-            a[color] += Math.pow(pixel, order + 1);
-            b[color] += Math.pow(pixel, order);
+            const tmp = matrix?.[t]?.[s]?.[color] ?? 0;
+            list[color].push(tmp);
           }
         }
       }
 
       for (let color of colors) {
-        // Calculate contraharmonic mean
-        // c = a / b
-        result[y][x][color] = Math.round(a[color] / b[color]);
+        /**
+         * Calculate contraharmonic mean
+         * a += x^(order + 1)
+         * b += x^order
+         */
+        const [a, b] = list[color].reduce(
+          ([a, b], v) => [a + Math.pow(v, order + 1), b + Math.pow(v, order)],
+          [0, 0]
+        );
+        // result = a / b
+        result[y][x][color] = Math.round(a / b);
       }
     }
   }

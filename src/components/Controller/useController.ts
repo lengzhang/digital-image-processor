@@ -75,7 +75,7 @@ const useController = () => {
         await operations.contraharmonicMeanFilter({
           source,
           size: parseInt(values["spatial-filter-size"]) || 3,
-          order: parseInt(values["contraharmonic-mean-filter-order"]) || 1,
+          order: parseFloat(values["contraharmonic-mean-filter-order"]) || 1,
         });
       } else if (method === "gaussian-smoothing-filter") {
         /** Gaussian Smoothing Filter */
@@ -161,8 +161,6 @@ const useController = () => {
 
       if (method === "addition") {
         const addend = parseInt(values["operations-addend"]);
-
-        console.log(values, addend, state.items);
         if (
           Number.isNaN(addend) ||
           addend < 0 ||
