@@ -51,15 +51,18 @@ const geometricMeanFilter = (matrix, size) => {
        */
       for (let color of colors) {
         // Calculate geometric mean
-        // g = product ^ (1 / (m * n))
+        /**
+         * 1.	If any value is zero, one is added to each value in the list.
+         * 2.	Calculate the sum of log of each value.
+         */
         const c = hasZero ? 1 : 0;
-
-        const n = list[color].length;
         const sum = list[color].reduce((p, v) => p + Math.log(v + c), 0);
-        let g = sum / n;
+        // 3.	Divide the sum by the size of the filter.
+        let g = sum / list[color].length;
+        // 4.	Calculate the antilog of the result and subtract one from the result
         g = Math.pow(10, g) - c;
 
-        result[y][x][color] = Math.round(g);
+        result[y][x][color] = Math.round(g) || 0;
       }
     }
   }

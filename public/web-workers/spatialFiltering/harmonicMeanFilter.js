@@ -47,7 +47,7 @@ const harmonicMeanFilter = (matrix, size) => {
       for (let color of colors) {
         // Calculate harmonic mean
         // h = (m * n) / sum
-        result[y][x][color] = Math.round(numberOfPixels / sums[color]);
+        result[y][x][color] = Math.round(numberOfPixels / sums[color]) || 0;
       }
     }
   }

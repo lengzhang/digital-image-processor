@@ -54,7 +54,7 @@ const contraharmonicMeanFilter = (matrix, size, order) => {
           [0, 0]
         );
         // result = a / b
-        result[y][x][color] = Math.round(a / b);
+        result[y][x][color] = Math.round(a / b) || 0;
       }
     }
   }

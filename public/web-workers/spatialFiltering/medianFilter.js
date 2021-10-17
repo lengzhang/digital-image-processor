@@ -18,7 +18,6 @@ const medianFilter = (matrix, size) => {
   const col = matrix.length;
   const row = matrix[0].length;
   const offset = Math.floor(size / 2);
-  const mid = Math.floor((size * size) / 2);
 
   const result = matrix.map((row) => row.map((pixel) => ({ ...pixel })));
 
@@ -43,6 +42,7 @@ const medianFilter = (matrix, size) => {
 
       for (let color of colors) {
         // Sort and assign the midian
+        const mid = Math.floor(list[color].length / 2);
         list[color].sort((a, b) => a - b);
         result[y][x][color] = list[color][mid];
       }

@@ -43,8 +43,9 @@ const minFilter = (matrix, size) => {
 
       for (let color of colors) {
         // Sort and assign the min
-        list[color].sort((a, b) => a - b);
-        result[y][x][color] = list[color][0];
+        let min = Infinity;
+        for (let v of list[color]) min = Math.min(min, v);
+        result[y][x][color] = min;
       }
     }
   }

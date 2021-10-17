@@ -42,8 +42,9 @@ const maxFilter = (matrix, size) => {
 
       for (let color of colors) {
         // Sort and assign the max
-        list[color].sort((a, b) => a - b);
-        result[y][x][color] = list[color][list[color].length - 1];
+        let max = -Infinity;
+        for (let v of list[color]) max = Math.max(max, v);
+        result[y][x][color] = max;
       }
     }
   }

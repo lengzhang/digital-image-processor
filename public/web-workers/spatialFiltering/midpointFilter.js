@@ -18,7 +18,6 @@ const midpointFilter = (matrix, size) => {
   const col = matrix.length;
   const row = matrix[0].length;
   const offset = Math.floor(size / 2);
-  const numberOfPixels = size * size;
 
   const result = matrix.map((row) => row.map((pixel) => ({ ...pixel })));
 
@@ -43,10 +42,14 @@ const midpointFilter = (matrix, size) => {
 
       for (let color of colors) {
         // Sort, calculate, and assign the midpoint
-        list[color].sort((a, b) => a - b);
-        const min = list[color][0];
-        const max = list[color][numberOfPixels - 1];
-        result[y][x][color] = Math.round((max - min) / 2);
+        let min = Infinity;
+        let max = -Infinity;
+        for (let v of list[color]) {
+          min = Math.min(min, v);
+          max = Math.max(max, v);
+        }
+        // result = (max + min) / 2
+        result[y][x][color] = Math.round((max + min) / 2);
       }
     }
   }
